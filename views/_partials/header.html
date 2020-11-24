@@ -1,6 +1,6 @@
-<nav class="navbar navbar-default" >
+
+<nav class="navbar   bg-light navbar navbar-dark bg-dark">
   <div class="container">
-    <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" 
       aria-expanded="false">
@@ -13,12 +13,10 @@
         <img width="90px" src="/public/img/timg.png" alt="">
       </a>
     </div>
-    <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="person" id="bs-example-navbar-collapse-1" style="display: flex;">
-      <form class="navbar-form navbar-left">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search">
-        </div>
+      <form class="form-inline" >
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
       </form>
       <ul class="nav navbar-nav navbar-right">
         {{ if user }}
@@ -46,7 +44,5 @@
         {{ /if }}
       </ul>
     </div>
-    <!-- /.navbar-collapse -->
   </div>
-  <!-- /.container-fluid -->
 </nav>

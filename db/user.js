@@ -1,4 +1,8 @@
 var mongoose = require('mongoose')
+
+// 连接数据库
+mongoose.connect('mongodb://localhost/blog', {useNewUrlParser: true});
+
 var Schema = mongoose.Schema
 
 var userSchema = new Schema({
@@ -6,7 +10,7 @@ var userSchema = new Schema({
     type: String,
     required: true
   },
-  name: {
+  nickname: {
     type: String,
     required: true
   },
