@@ -27,7 +27,7 @@ var userSchema = new Schema({
     type: String,
     default: '/public/img/avatar-default.png'
   },
-  // 个人简介
+  // 简介
   bio: {
     type: String,
     default: ''
