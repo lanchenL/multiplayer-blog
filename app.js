@@ -33,5 +33,5 @@ app.use(session({
 app.use(router)
 
 app.listen('3000', function() {
-  console.log('服务启动成功。点击访问： 127.0.0.1:3000');
+  console.log('服务启动成功。点击访问： http://127.0.0.1:3000');
 })
