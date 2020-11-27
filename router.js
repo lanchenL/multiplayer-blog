@@ -3,9 +3,11 @@ var express = require('express')
 
 // 导入user.js
 var User = require('./db/user')
+var News = require('./db/new')
 
 // 使用md5来进行密码的加密
 var md5 = require('blueimp-md5')
+const user = require('./db/user')
 
 // 导入路由
 var router = express.Router()
@@ -142,6 +144,21 @@ router.get('/logout', function (req, res) {
   req.session.user = null;
   // 重定向带登录页
   res.redirect('/login')
+})
+// 发表留言区
+router.get('/topics/new', function(req, res ) {
+  res.render('topic/new.html', {
+    user: req.session.user
+  })
+})
+router.post('/topics/new', function(req, res) {
+  console.log(req.body, 'user为:',user);
+  new News(req.body).save(function(err, news) {
+    if(err) {
+      return res.status(500).send(err.message)
+    }
+    res.redirect('/')
+  })
 })
 // 导出路由
 module.exports = router;
