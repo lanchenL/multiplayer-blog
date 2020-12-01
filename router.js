@@ -146,19 +146,19 @@ router.get('/logout', function (req, res) {
   res.redirect('/login')
 })
 // 发表留言区
-router.get('/topics/new', function(req, res ) {
-  res.render('topic/new.html', {
-    user: req.session.user
-  })
-})
-router.post('/topics/new', function(req, res) {
-  console.log(req.body, 'user为:',user);
-  new News(req.body).save(function(err, news) {
-    if(err) {
-      return res.status(500).send(err.message)
-    }
-    res.redirect('/')
-  })
-})
+// router.get('/topics/new', function(req, res ) {
+//   res.render('topic/new.html', {
+//     user: req.session.user
+//   })
+// })
+// router.post('/topics/new', function(req, res) {
+//   console.log(req.body, 'user为:',user);
+//   new News(req.body).save(function(err, news) {
+//     if(err) {
+//       return res.status(500).send(err.message)
+//     }
+//     res.redirect('/')
+//   })
+// })
 // 导出路由
 module.exports = router;

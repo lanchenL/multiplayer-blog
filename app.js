@@ -8,6 +8,7 @@ var session = require('express-session')
 
 // 导入路由js
 var router = require('./router')
+var topic = require('./routes/topic')
 
 var app = express()
 
@@ -29,8 +30,9 @@ app.use(session({
   saveUninitialized: true  // 当为true时，无论你是否使用session，都会给你分配一把钥匙
 }))
 
-// 使用路由
+// 使用路由,进行挂载
 app.use(router)
+app.use(topic)
 
 app.listen('3000', function() {
   console.log('服务启动成功。点击访问： http://127.0.0.1:3000');

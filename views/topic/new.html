@@ -14,10 +14,10 @@
       <div class="row" >
         <div class="col-md-3"></div>
         <div class="col-md-6">
-          <form action="/topics/new" method="POST" >
+          <form action="/topics/new" method="POST" id="topic_form">
             <div class="form-group">
               <label for="exampleInputEmail1">选择主题</label>
-              <select class="form-control" name="theme">
+              <select class="form-control" name="theme" id="theme">
                 <option>分享</option>
                 <option>问答</option>
                 <option>招聘</option>
@@ -30,7 +30,7 @@
             </div>
             <div class="form-group">
               <label for="exampleInputPassword1">内容</label>
-              <textarea class="form-control" rows="3" name="content"></textarea>
+              <textarea class="form-control" rows="3" name="content" id="content"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
@@ -39,6 +39,29 @@
       </div>
     </section>
   </div>
+  <script src="/node_modules/jquery/dist/jquery.js"></script>
+  <script>
+    $('#topic_form').on('submit', function(e) {
+      e.preventDefault()
+      let formData = $(this).serialize()
+      console.log(formData);
+      $.ajax({
+        type: 'post',
+        url: '/topics/new',
+        dataType: 'json',
+        data: formData,
+        success: function(data) {
+          var err_code = data.err_code
+          if(err_code === 0) {
+            window.alert('留言成功')
+            window.location.href = '/'
+          }else {
+            window.alert('服务器正忙，请稍后再试')
+          }
+        }
+      })
+    })
+  </script>
 </body>
 </html>
 
