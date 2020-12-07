@@ -7,7 +7,7 @@ var router = express.Router()
 
 router.get('/topics/new', function(req, res) {
   var body = req.session.user
-  // console.log(body,'啦啦啦啦');
+  console.log(body,'啦啦啦啦');
   res.render('topic/new.html', {
     user: body
   })
@@ -16,7 +16,7 @@ router.get('/topics/new', function(req, res) {
 router.post('/topics/new', function(req, res) {
   var body = req.body
   // new Topic(body)
-  // console.log('body为：', body);
+  console.log('body为：', body);
   new Topic(body).save(function(err, TopicData) {
     if(err) {
       return res.status(500).json({

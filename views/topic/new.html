@@ -32,6 +32,18 @@
               <label for="exampleInputPassword1">内容</label>
               <textarea class="form-control" rows="3" name="content" id="content"></textarea>
             </div>
+            <div class="form-group" style="display: none;">
+              <label for="">发起人id</label>
+              <input type="text" name="publisher_id" value="{{user.id}}" readonly style="border: none;">
+            </div>
+            <div class="form-group" style="display: none;">
+              <label for="">发起人</label>
+              <input type="text" name="publisher" value="{{user.nickname}}" readonly style="border: none;">
+            </div>
+            <div class="form-group" style="display: none;">
+              <label for="">发表时间</label>
+              <input type="text" name="createtime" value="getDate()" readonly style="border: none;" id="createtime">
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         </div>
@@ -40,7 +52,12 @@
     </section>
   </div>
   <script src="/node_modules/jquery/dist/jquery.js"></script>
+  <script src="/node_modules/moment/moment.js"></script>
   <script>
+    var nowDate = new Date();
+    nowDate = moment(nowDate).format('YYYY-MM-DD HH:mm:ss');
+    document.getElementById('createtime').value = nowDate;
+
     $('#topic_form').on('submit', function(e) {
       e.preventDefault()
       let formData = $(this).serialize()

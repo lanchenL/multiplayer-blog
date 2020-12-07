@@ -5,7 +5,28 @@
 {{block 'body'}}
 <section class="container" style="margin-top: 100px;  margin-bottom: 76px;">
   <ul class="media-list">
-    
+    {{ each topics topic index}}
+    <li class="media" style="margin: 20px auto;">
+      <div class="media-left">
+        <a href="#">
+          <img width="40" height="40" class="media-object" src="../public/img/avatar-default.png" alt="...">
+        </a>
+      </div>
+      <div class="media-body" >
+        <input type="text" value="{{ topic.id }}" id="topic_id" style="display: none;">
+        <div class="media-title" style="position: relative;">
+          <!-- <h4 class="media-heading"><a href="javascript:void(0)" id="detail">{{ topic.title }}</a></h4> -->
+          <a href="/topic/show?id={{topic.id}}&p_id={{topic.publisher_id}}" id="detail">{{ topic.title }}</a>
+          <span style="position: absolute; right: 50%;">{{topic.publisher}}</span>
+        </div>
+        <div class="media-content" style="position: relative;">
+          <p style="position: absolute; left: 0px;">{{topic.content}}</p>
+          <span style="position: absolute;left: 50%;">浏览{{topic.readNum}}</span>
+          <time style="position: absolute; right: 0px;">{{topic.createtime}}</time>
+        </div>
+      </div>
+    </li>
+    {{ /each }}
   </ul>
   <nav aria-label="Page navigation">
     <ul class="pagination">

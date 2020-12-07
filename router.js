@@ -3,7 +3,8 @@ var express = require('express')
 
 // 导入user.js
 var User = require('./db/user')
-var News = require('./db/new')
+// var News = require('./db/new')
+var Topic = require('./db/topic')
 
 // 使用md5来进行密码的加密
 var md5 = require('blueimp-md5')
@@ -14,8 +15,17 @@ var router = express.Router()
 // 设置路由
 router.get('/', function (req, res) {
   console.log(req.session.user);
-  res.render('index.html', {
-    user: req.session.user
+  Topic.find(function(err, topics) {
+    if(err) {
+      res.status(500).json({
+        err_code: 500,
+        message: '没有发表的数据'
+      })
+    }
+    res.render('index.html', {
+      user: req.session.user,
+      topics: topics
+    })
   })
 })
 
