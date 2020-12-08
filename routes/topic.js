@@ -30,5 +30,9 @@ router.post('/topics/new', function(req, res) {
     })
   })
 })
+router.get('/topics/show', function(req, res) {
+  console.log(req.session.user);
+  console.log(req.query);
+})
 
 module.exports = router

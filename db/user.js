@@ -45,9 +45,16 @@ var userSchema = new Schema({
     type: Date
   },
   status: {
+    // 0 没有权限限制
+    // 1 不可以评论
+    // 2 不可以登录
     type: Number,
     enum: [0, 1, 2],
     default: 0
+  },
+  fans: {
+    type: Number,
+    default: 0 
   }
 })
 module.exports = mongoose.model('User', userSchema)
