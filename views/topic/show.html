@@ -1,123 +1,114 @@
-{{extend '../_layouts/home.html'}}
-
-{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
-
-{{block 'head'}}
-<link rel="stylesheet" href="/public/css/markdown-github.css">
-<style>
-  .panel .panel-heading .action i {
-    margin-right: 10px;
-  }
-</style>
-{{/block}}
-
-{{block 'body'}}
-<section class="container">
-  <div class="row">
-    <div class="col-md-9">
-      <article class="markdown-body">
-      <h1 id="_1"><a name="user-content-_1" href="#_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>测试</h1>
-      <blockquote>
-        <p>杨柳青青江水平</p>
-      </blockquote>
-      <h2 id="_2"><a name="user-content-_2" href="#_2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>起步</h2>
-      <ul>
-        <li>123</li>
-        <li>456</li>
-        <li>789</li>
-      </ul>
-      <h3 id="_3"><a name="user-content-_3" href="#_3" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>哈哈哈</h3>
-      <p>然后这里就开始 <code>hello world</code> ，就用可以了。</p>
-      <p>下面是一段代码：</p>
-      <pre><code class="javascript">var foo = 'bar'
-  console.log(foo)
-  </code></pre>
-      <h3 id="_4"><a name="user-content-_4" href="#_4" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>嘿嘿</h3>
-      <h3 id="_5"><a name="user-content-_5" href="#_5" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>呼呼</h3>
-      <h2 id="_6"><a name="user-content-_6" href="#_6" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>是什么</h2>
-      <h2 id="_7"><a name="user-content-_7" href="#_7" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>为什么</h2>
-      <h2 id="_8"><a name="user-content-_8" href="#_8" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>怎么做</h2>
-      <h2 id="_9"><a name="user-content-_9" href="#_9" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>哈哈哈</h2>
-    </article>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <span>lipengzhou</span> commented 
-          <span>24 minutes ago</span>
-          <span class="action">
-            <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-          </span>
-        </div>
-        <div class="panel-body">
-          评论测试
-        </div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <span>lipengzhou</span> commented 
-          <span>24 minutes ago</span>
-          <span class="action">
-            <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-          </span>
-        </div>
-        <div class="panel-body">
-          评论测试
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>回复评论</title>
+  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+  <div >
+    <h2 class="sub-header" style="text-align: center; margin: 20px 0;">填写内容</h2>
+    <section class="container">
+      <div class="row">
+        <div class="col-md-9">
+          <article class="markdown-body">
+            <h1 id="_1"><a name="user-content-_1" href="#_1" class="headeranchor-link" aria-hidden="true"><span
+                  class="headeranchor"></span></a>{{topic.title}}</h1>
+            <h4><a name="user-content-_2" href="#_2" class="headeranchor-link" aria-hidden="true">{{topic.publisher}}</a>
+            </h4>
+            <a href="">粉丝{{quser.fans}}</a> <br>
+            <!-- <a href="javascript:void(0)" id="getfan">+关注</a> -->
+            <button type="button" id="getfan">关注</button>
+            <p>{{topic.content}}</p>
+          </article>
+          {{ each comments comment index }}
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <span>{{comment.from_nickname}}</span> 评论
+              <span class="action">
+                <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
+                <a href=""><i class="glyphicon glyphicon-thumbs-down pull-right"></i>{{ comment.like }}</a>
+              </span>
+            </div>
+            <div class="panel-body">
+              {{ comment.content }}
+            </div>
+            <hr>
+            <div class="reply-body">
+              <form id="reply-body">
+                <textarea name="" id="" cols="30" rows="10"></textarea>
+                <a href="">答复</a>
+              </form>
+            </div>
+          </div>
+          {{ /each }}
+          <hr>
+          <form id="comment_form">
+            <div class="form-group">
+              <label for="">添加回复</label>
+              <textarea class="form-control" name="content" id="" cols="10" rows="10"></textarea>
+            </div>
+            <div class="form-group" style="display: none;">
+              <label for="">评论人id</label>
+              <input type="text" name="from_id" value="{{user._id}}">
+            </div>
+            <div class="form-group" style="display: none;">
+              <label for="">评论人昵称</label>
+              <input type="text" name="from_nickname" value="{{user.nickname}}">
+            </div>
+            <div class="form-group" style="display: none;">
+              <label for="">文章id</label>
+              <input type="text" name="topic_id" value="{{topic.id}}">
+            </div>
+            <button type="submit" class="btn btn-success">回复</button>
+          </form>
         </div>
       </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <span>lipengzhou</span> commented 
-          <span>24 minutes ago</span>
-          <span class="action">
-            <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-          </span>
-        </div>
-        <div class="panel-body">
-          评论测试
-        </div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <span>lipengzhou</span> commented 
-          <span>24 minutes ago</span>
-          <span class="action">
-            <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-          </span>
-        </div>
-        <div class="panel-body">
-          评论测试
-        </div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <span>lipengzhou</span> commented 
-          <span>24 minutes ago</span>
-          <span class="action">
-            <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
-          </span>
-        </div>
-        <div class="panel-body">
-          评论测试
-        </div>
-      </div>
-      <hr>
-      <form>
-        <div class="form-group">
-          <label for="exampleInputPassword1">添加回复</label>
-          <textarea class="form-control" name="" id="" cols="10" rows="10"></textarea>
-        </div>
-        <button type="submit" class="btn btn-success">回复</button>
-      </form>
-    </div>
+    </section>
   </div>
-</section>
-{{/block}}
+  <script src="/node_modules/jquery/dist/jquery.js"></script>
+  <script>
+    $('#comment_form').on('submit', function(e) {
+      e.preventDefault();
+      var formData = $(this).serialize();
+      $.ajax({
+        url: '/comment',
+        dataType: 'json',
+        type: 'post',
+        async: true,
+        data: formData,
+        success: function(data) {
+          var err_code = data.err_code;
+          console.log(err_code);
+          if(err_code === 0) {
+            window.location.reload()
+          }else {
+            alert(data.message)
+          }
+        }
+      })
+    })
+    $('#getfan').click(function(e) {
+      $.ajax({
+        url: '/getFuns',
+        dataType: 'json',
+        type: 'get',
+        data: 'user_id={{topic.publisher_id}}&fun_id={{user._id}}',
+        success: function(data) {
+          var err_code = data.err_code;
+          console.log(err_code);
+          if(err_code === 0) {
+            window.alert('关注成功!')
+            window.location.reload();
+          }
+          if(err_code === 1) {
+            window.alert('已经关注过了!')
+          }
+        }
+      })
+    })
+  </script>
+</body>
+</html>
+

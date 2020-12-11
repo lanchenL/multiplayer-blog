@@ -34,6 +34,19 @@ app.use(session({
 app.use(router)
 app.use(topic)
 
+//配置一个处理404得中间件
+app.use(function (req, res, next) {
+  res.render('404.html')
+})
+
+//配置全局错误处理中间件
+app.use(function (err, req, res, next) {
+  res.status(500).json({
+    err_code: 500,
+    message: err.message  
+  })
+})
+
 app.listen('3000', function() {
   console.log('服务启动成功。点击访问： http://127.0.0.1:3000');
 })
