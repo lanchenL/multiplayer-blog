@@ -74,6 +74,8 @@ router.get('/topics/show', function(req, res, next) {
     res.redirect('/login')
   }
 })
+
+
 router.post('/comment', function(req, res, next) {
   var commentData = new Comment(req.body)
   console.log('commentData为', commentData);
@@ -87,6 +89,8 @@ router.post('/comment', function(req, res, next) {
     })
   })
 })
+
+
 router.get('/getFuns', function(req, res, next) {
   console.log('添粉成功');
   // console.log(req.query);
@@ -96,38 +100,53 @@ router.get('/getFuns', function(req, res, next) {
       next(err)
     }
     // console.log(funs);
-    if(!funs) {
-      User.findById(req.query.user_id, function(err, user) {
-        if(err) {
-          next(err)
-        }
-        console.log('user', user);
-        console.log('user.fans', user.fans);
-        
-        user.fans += 1;
-        User.updateOne({_id: req.query.user_id}, {fans: user.funs}, function(err, message) {
+    console.log(req.query);
+    Funs.findOne({
+      fan_id: req.session.user._id
+    }, function(err, fan) {
+      if(err) {
+        next(err)
+      }
+      console.log('查询fan成功');
+      console.log(fan);
+      if(!fan) {
+        User.findById(req.query.user_id, function(err, user) {
           if(err) {
             next(err)
           }
+          console.log('user', user);
+          console.log(user.fans);
+          user.fans += 1;
+          console.log(user.fans);
+          User.updateOne({
+            _id: req.query.user_id
+          }, {
+            fans: user.fans
+          }, function(err, message) {
+            if(err) {
+              next(err)
+            }
+            console.log('更新粉丝成功');
+            console.log(user.fans);
+          })
+          var nfan = new Funs(req.query)
+          nfan.save(req.query, function(err, message) {
+            if(err) {
+              next(err)
+            }
+          })
+          res.status(200).json({
+            err_code: 0,
+            message: 'fan is success'
+          })
         })
-        var nfuns = new Funs(req.query);
-        nfuns.save(req.query, function(err, message) {
-          if(err) {
-            next(err)
-          }
-        })
+      }else {
         res.status(200).json({
-          err_code: 0,
-          message: 'funs is sava success'
+          err_code: 1,
+          message: 'fan have exist'
         })
-      })
-      
-    }else {
-      res.status(200).json({
-        err_code: 1,
-        message: 'funs is already exist'
-      })
-    }
+      }
+    })
   })
 })
 
