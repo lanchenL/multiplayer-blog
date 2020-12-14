@@ -3,53 +3,110 @@
 {{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
 
 {{block 'body'}}
-<section class="container">
-  {{include '../_partials/settings-nav.html'}}
-  <div class="col-md-5">
-    <form>
-      <div class="form-group">
-        <label for="exampleInputEmail1">账号</label>
-        <p class="form-control-static">email@example.com</p>
+<div style="margin: 90px 0px;">
+  <section class="container">
+    <div class="row">
+      {{include '../_partials/settings-nav.html'}}
+      <div class="col-md-5">
+        <form id="profile_form" method="post">
+          <div class="form-group">
+            <label for="">账号</label>
+            <input type="email" name="email" value="{{ user.email }}" readonly style="border: none;">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">昵称</label>
+            <input type="text" class="form-control" id="" name="nickname" placeholder="" value="{{ user.nickname }}">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">介绍</label>
+            <textarea class="form-control" rows="3" placeholder="自我介绍一下吧" name="bio">{{user.bio}}</textarea>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">性别</label>
+            <div>
+              
+              <input type="hidden" name="" id="hgender" value="{{user.gender}}">
+              
+              <label class="radio-inline">
+                <input type="radio" name="gender" id="" value="男"> 男
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="gender" id="" value="女"> 女
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="gender" id="" value="保密"> 保密
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="">生日</label>
+            <input  class="form-control" id="bir" name="birthday" placeholder="" value="{{user.birthday}}">
+          </div>
+          <button type="submit" class="btn btn-success">保存</button>
+        </form>
       </div>
-      <div class="form-group">
-        <label for="exampleInputPassword1">昵称</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+      <div class="col-md-2 profile-avatar">
+        <form enctype="multipart/form-data" method="post" name="fileInfo" id="upavatar">
+          <dl>
+            <dt style="text-align: center;">点击图片更改头像</dt>
+            <dd>
+              <img class="avatar" width="150" height="150" src="{{user.avatar}}" alt="" id="preview">
+              <input type="file" accept="/png,/jpg" id="picUpload" name="file" style="display: none;">
+              <div>
+                <button type="button" class="btn btn-light" id="upfile_btn" style="font-size: 14px;">
+                  Upload new picture
+                </button>
+              </div>
+            </dd>
+          </dl>
+        </form>
       </div>
-      <div class="form-group">
-        <label for="exampleInputPassword1">介绍</label>
-        <textarea class="form-control" rows="3"></textarea>
-      </div>
-      <div class="form-group">
-        <label for="exampleInputPassword1">性别</label>
-        <div>
-          <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> 男
-          </label>
-          <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> 女
-          </label>
-          <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> 保密
-          </label>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="exampleInputPassword1">生日</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
-      </div>
-      <button type="submit" class="btn btn-success">保存</button>
-    </form>
-  </div>
-  <div class="col-md-2 profile-avatar">
-    <dl>
-      <dt>头像设置</dt>
-      <dd>
-        <img class="avatar" width="150" height="150" src="../public/img/avatar-max-img.png" alt="">
-        <div>
-          <button class="btn btn-default" href="">Upload new picture</button>
-        </div>
-      </dd>
-    </dl>
-  </div>
-</section>
+    </div>
+  </section>
+</div>
+{{/block}}
+
+
+{{block 'script'}}
+<script src="/public/js/laydate/laydate.js"></script>
+<script>
+  laydate.render({
+    elem: '#bir',
+    type: 'date', // 为xx-xx-xx
+    trigger: 'click'//默认为click，即点击后出现日历框
+  })
+
+  // 选择性别的值
+  var hg = $('#hgender').val()  //val()方法是选中被选择的按钮
+  $("input[name=gender]").each(function () {
+    var str = $(this).val();
+    if (str == hg) {
+      $(this).attr('checked', true)      // 为选中的按钮添加checked属性
+    }
+  })
+
+  $('#profile_form').on('submit', function(e) {
+    e.preventDefault()
+    let formData = $(this).serialize();
+    $.ajax({
+      url: '/settings/profile',
+      dataType: 'json',
+      data: formData,
+      type: 'post',
+      async: true,
+      success: function(data) {
+        console.log(data);
+        var err_code = data.err_code;
+        if(err_code === 0) {
+          // 修改成功
+          window.alert('信息保存成功')
+          window.location.href = '/'
+        }else {
+          window.alert('信息修改失败')
+        }
+      }
+    })
+  })
+</script>
+  
 {{/block}}

@@ -9,6 +9,7 @@ var session = require('express-session')
 // 导入路由js
 var router = require('./router')
 var topic = require('./routes/topic')
+var profile = require('./routes/profile')
 
 var app = express()
 
@@ -33,6 +34,7 @@ app.use(session({
 // 使用路由,进行挂载
 app.use(router)
 app.use(topic)
+app.use(profile)
 
 //配置一个处理404得中间件
 app.use(function (req, res, next) {

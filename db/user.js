@@ -29,7 +29,7 @@ var userSchema = new Schema({
   // 头像
   avatar: {
     type: String,
-    default: '/public/img/avatar-default.png'
+    default: '/public/img/luo.jpg'
   },
   // 简介
   bio: {
@@ -37,12 +37,11 @@ var userSchema = new Schema({
     default: ''
   },
   gender: {
-    type: Number,
-    enum: [-1, 0, 1],
-    default: -1
+    type: String,
+    default: '保密'
   },
   birthday: {
-    type: Date
+    type: String
   },
   status: {
     // 0 没有权限限制
