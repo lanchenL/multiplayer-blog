@@ -74,6 +74,8 @@ router.get('/topics/show', function(req, res, next) {
     res.redirect('/login')
   }
 })
+
+
 router.post('/comment', function(req, res, next) {
   var commentData = new Comment(req.body)
   console.log('commentData为', commentData);
@@ -87,6 +89,8 @@ router.post('/comment', function(req, res, next) {
     })
   })
 })
+
+
 router.get('/getFuns', function(req, res, next) {
   console.log('添粉成功');
   // console.log(req.query);
