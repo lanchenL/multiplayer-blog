@@ -83,7 +83,7 @@ router.post('/settings/admin', function(req, res, next) {
         message: 'opassword is issue'
       })
     }
-    if(user.password == body.npassword || user.password == body.cpassword) {
+    if(user.password == md5(md5(body.npassword)) || user.password == md5(md5(body.cpassword))) {
       return res.status(200).json({
         err_code: 2,
         message: 'this password is Cannot be the same as the old password'
@@ -96,18 +96,48 @@ router.post('/settings/admin', function(req, res, next) {
       })
     }
     User.findOneAndUpdate({
-      email: suser.password
+      email: suser.email
     }, {
-      password: body.npassword
+      password: md5(md5(body.npassword))
     }, function(err, data) {
       if(err) {
         next(err)
       }
+      console.log('data为', data)
       res.status(200).json({
         err_code: 0,
         message: 'the password is change ok'
       })
     })
   })
+  
+})
+
+// 注销按钮
+router.get('/logoff', function(req, res, next) {
+  console.log('删除');
+  var user = req.session.user
+  var body = req.query;
+  console.log(body.confirm, typeof(body.confirm), body.confirm == true);
+  if(body.confirm == 'true') {
+    User.deleteOne({
+      email: user.email
+    }, function(err, message) {
+      if(err) {
+        next(err)
+      }
+      req.session.destroy();
+      res.status(200).json({
+        err_code: 0,
+        message:  'delete is ok'
+      })
+    })
+  }else {
+    res.status(200).json({
+      err_code: 1,
+      message: 'delete is false'
+    })
+  }
+  
 })
 module.exports = router

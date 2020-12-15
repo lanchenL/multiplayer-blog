@@ -33,7 +33,7 @@
         </div>
         <div>
           <p>一旦注销，不可找回，请谨慎操作</p>
-          <button class="btn btn-danger">删除</button>
+          <button  class="btn btn-danger" id="logoff">注销</button>
         </div>
         <hr>
       </div>
@@ -62,14 +62,38 @@
             window.location.href = '/'
           }else if(err_code === 1) {
             window.alert('旧密码错误')
+            window.location.reload()
           }else if(err_code === 2) {
             window.alert('不能和旧密码一致')
+            window.location.reload()
           }else if(err_code === -1) {
             window.alert('新密码不一致')
+            window.location.reload()
           }else {
             alert('服务器正忙，请稍后再试')
           }
           
+        }
+      })
+    })
+    $('#logoff').click(function(e) {
+      var confirm = window.confirm('确定删除账号！')
+      console.log(confirm);
+      var confirmData = {confirm: confirm}
+      $.ajax({
+        url: '/logoff',
+        data: confirmData,
+        type: 'get',
+        dataType: 'json',
+        success: function(data) {
+          var session = data
+          var err_code = data.err_code;
+          if(err_code === 0) {
+            window.location.href = '/'
+          }else {
+            window.alert('已取消删除账号')
+            window.location.reload();
+          }
         }
       })
     })
