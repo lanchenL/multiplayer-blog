@@ -48,14 +48,21 @@
       <div class="col-md-2 profile-avatar">
         <form enctype="multipart/form-data" method="post" name="fileInfo" id="upavatar">
           <dl>
-            <dt style="text-align: center;">点击图片更改头像</dt>
+            <!-- <dt style="text-align: center;">点击图片更改头像</dt> -->
             <dd>
-              <img class="avatar" width="150" height="150" src="{{user.avatar}}" alt="" id="preview">
+              <img src="{{user.avatar}}" alt="" id="selectImg" style="max-width: 150px; max-height: 150px;">
+              <div>
+                <!-- elCaptionText="点击" previewFileType = 'image' maxImageWidth='100px' maxImageHeight = '100px'
+                allowedFileTypes=['png'] autoReplace = true -->
+                <input type="file" id="uploadImg" onchange="xmTanUploadImg(this)" accept="/png,/jpg">
+                <a href="javascript:void()" download="picture.jpg" id="xmTanDownload">点击下载</a>
+              </div>
+              <!-- <img class="avatar" width="150" height="150" src="{{user.avatar}}" alt="" id="preview">
               <input type="file" accept="/png,/jpg" id="picUpload" name="file" style="display: none;">
               <div>
                 <button type="button" class="btn btn-light" id="upfile_btn" style="font-size: 14px;">
                   Upload new picture
-                </button>
+                </button> -->
               </div>
             </dd>
           </dl>
@@ -68,6 +75,9 @@
 
 
 {{block 'script'}}
+<script src="./node_modules/bootstrap-fileinput/css/fileinput.min.css"></script>
+<script src="./node_modules/bootstrap-fileinput/js/fileinput.min.js"></script>
+<script src="./node_modules/bootstrap-fileinput/js/locales/zh.js"></script>
 <script src="/public/js/laydate/laydate.js"></script>
 <script>
   laydate.render({
@@ -117,6 +127,27 @@
   },function(){
     $(this).css('opacity','1')
   })
+
+  // 使用bootstrap-fileinput来完成点击图片时进行图片的切换
+  function xmTanUploadImg(obj) {
+      console.log(obj);
+      var file = obj.files[0];
+      console.log(file);
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = function (e) {    
+          console.log(e);
+          //成功读取文件
+          var img = document.getElementById("selectImg");
+          img.src = e.target.result;   //或 img.src = this.result / e.target == this
+
+          //实现点击下载图片功能
+          var xmTanDownload =  document.getElementById("xmTanDownload");
+          xmTanDownload.setAttribute("href", e.target.result);  //给a标签设置href
+          xmTanDownload.setAttribute("download", file.name)
+          console.log(file.name);
+      };
+    }
 </script>
   
 {{/block}}
