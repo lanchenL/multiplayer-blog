@@ -8,13 +8,11 @@
     {{ each topics topic index}}
       <li class="media" style="margin-top: 20px; margin-bottom: 45px; ">
         {{ if user }}
-          {{ each users user index }}
             <div class="media-left">
               <a href="#">
                 <img width="40" height="40" class="media-object" src="{{user.avatar}}" alt="">
               </a>
             </div>
-          {{ /each }}
         {{ else }}
             <img width="40" height="40" class="media-object" src="../public/img/luo.jpg" alt="">
         {{ /if }}

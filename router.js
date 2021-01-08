@@ -20,10 +20,17 @@ router.get('/', function (req, res) {
       if(err) {
         console.log(err);
       }
-      res.render('index.html', {
-        user: req.session.user,
-        topics: topics
+      User.find(function(err, usered) {
+        if(err) {
+          console.log(err);
+        }
+        res.render('index.html', {
+          user: req.session.user,
+          topics: topics,
+          usered: usered
+        })
       })
+      
       
     })
   
