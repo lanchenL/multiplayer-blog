@@ -117,6 +117,8 @@ router.post('/register', async function (req, res ) {
     //   })
     // })
   // })
+
+  // 上方的$or的改良版，也就是mongoDB使用的或运算符
   var body = req.body
   try {
     if(await User.findOne({ email: body.email})) {

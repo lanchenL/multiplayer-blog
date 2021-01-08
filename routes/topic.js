@@ -93,61 +93,117 @@ router.post('/comment', function(req, res, next) {
 
 router.get('/getFuns', function(req, res, next) {
   console.log('添粉成功');
-  // console.log(req.query);
-  // console.log(req.session.user._id);
-  Funs.findOne({fan_id: req.session.user._id}, function(err, funs) {
+  console.log(req.query);
+  console.log(req.session.user._id);
+  Funs.findOne({
+    $and: [
+      {
+        user_id: req.query.user_id
+      },
+      {
+        fan_id: req.session.user._id
+      }
+    ]
+  }, function(err, fan) {
     if(err) {
       next(err)
     }
-    // console.log(funs);
-    console.log(req.query);
-    Funs.findOne({
-      fan_id: req.session.user._id
-    }, function(err, fan) {
-      if(err) {
-        next(err)
-      }
-      console.log('查询fan成功');
-      console.log(fan);
-      if(!fan) {
-        User.findById(req.query.user_id, function(err, user) {
+    if(!fan) {
+      User.findById(req.query.user_id, function(err, user) {
+        if(err) {
+          next(err)
+        }
+        console.log('user', user);
+        console.log(user.fans);
+        user.fans += 1;
+        console.log(user.fans);
+        User.updateOne({
+          _id: req.query.user_id
+        }, {
+          fans: user.fans
+        }, function(err, message) {
           if(err) {
             next(err)
           }
-          console.log('user', user);
+          console.log('更新粉丝成功');
           console.log(user.fans);
-          user.fans += 1;
-          console.log(user.fans);
-          User.updateOne({
-            _id: req.query.user_id
-          }, {
-            fans: user.fans
-          }, function(err, message) {
-            if(err) {
-              next(err)
-            }
-            console.log('更新粉丝成功');
-            console.log(user.fans);
-          })
-          var nfan = new Funs(req.query)
-          nfan.save(req.query, function(err, message) {
-            if(err) {
-              next(err)
-            }
-          })
-          res.status(200).json({
-            err_code: 0,
-            message: 'fan is success'
-          })
         })
-      }else {
+        var nfan = new Funs(req.query)
+        nfan.save(req.query, function(err, message) {
+          if(err) {
+            next(err)
+          }
+        })
         res.status(200).json({
-          err_code: 1,
-          message: 'fan have exist'
+          err_code: 0,
+          message: 'fan is success'
         })
-      }
-    })
+      })
+    }else {
+      res.status(200).json({
+        err_code: 1,
+        message: 'fan have exist'
+      })
+    }
   })
+
+
+
+// 下面写法有问题，点击关注的时候只能关注一个，再点击关注另一个作者的时候，显示已经关注过了
+  // Funs.findOne({user_id: req.query.user_id}, function(err, funs) {
+  //   if(err) {
+  //     next(err)
+  //   }
+  //   console.log('查询评论作者id成功');
+  //   // console.log(funs);
+  //   console.log(req.query);
+  //   Funs.findOne({
+  //     fan_id: req.session.user._id
+  //   }, function(err, fan) {
+  //     if(err) {
+  //       next(err)
+  //     }
+  //     console.log('查询当前登陆者funs的id信息成功');
+  //     console.log(fan);
+  //     if(!fan) {
+  //       User.findById(req.query.user_id, function(err, user) {
+  //         if(err) {
+  //           next(err)
+  //         }
+  //         console.log('user', user);
+  //         console.log(user.fans);
+  //         user.fans += 1;
+  //         console.log(user.fans);
+  //         User.updateOne({
+  //           _id: req.query.user_id
+  //         }, {
+  //           fans: user.fans
+  //         }, function(err, message) {
+  //           if(err) {
+  //             next(err)
+  //           }
+  //           console.log('更新粉丝成功');
+  //           console.log(user.fans);
+  //         })
+  //         var nfan = new Funs(req.query)
+  //         nfan.save(req.query, function(err, message) {
+  //           if(err) {
+  //             next(err)
+  //           }
+  //         })
+  //         res.status(200).json({
+  //           err_code: 0,
+  //           message: 'fan is success'
+  //         })
+  //       })
+  //     }else {
+  //       res.status(200).json({
+  //         err_code: 1,
+  //         message: 'fan have exist'
+  //       })
+  //     }
+  //   })
+  // })
 })
 
 module.exports = router
