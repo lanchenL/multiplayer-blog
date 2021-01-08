@@ -9,7 +9,11 @@
       <li class="media" style="margin-top: 20px; margin-bottom: 45px; ">
         <div class="media-left">
           <a href="#">
+            {{ if user }}
             <img width="40" height="40" class="media-object" src="{{user.avatar}}" alt="">
+            {{ else }}
+            <img width="40" height="40" class="media-object" src="../public/img/luo.jpg" alt="">
+            {{ /if }}
           </a>
         </div>
         <div class="media-body" >

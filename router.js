@@ -15,22 +15,18 @@ var router = express.Router()
 // 设置路由
 router.get('/', function (req, res) {
   console.log(req.session.user);
-  if(req.session.user) {
+  
     Topic.find(function(err, topics) {
       if(err) {
-        res.status(500).json({
-          err_code: 500,
-          message: '没有发表的数据'
-        })
+        console.log(err);
       }
       res.render('index.html', {
         user: req.session.user,
         topics: topics
       })
+      
     })
-  }else {
-    res.redirect('/login')
-  }
+  
 })
 
 router.get('/login', function(req, res) {
