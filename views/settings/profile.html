@@ -47,25 +47,13 @@
       </div>
       <div class="col-md-2 profile-avatar">
         <form enctype="multipart/form-data" method="post" name="fileInfo" id="upavatar">
-          <dl>
-            <!-- <dt style="text-align: center;">点击图片更改头像</dt> -->
-            <dd>
-              <img src="{{user.avatar}}" alt="" id="selectImg" style="max-width: 150px; max-height: 150px;">
+              <img src="{{user.avatar}}" alt="" id="selectImg" class="head-img" name="selectImg" style="max-width: 150px; max-height: 150px;">
+              <input type="file" id="uploadImg" onchange="xmTanUploadImg(this)" name="selectImgInput" accept="/png,/jpg">
+              <a href="javascript:void()" download="picture.jpg" id="xmTanDownload">点击下载</a>
+              <img  id="xxx" src="" alt="">
               <div>
-                <!-- elCaptionText="点击" previewFileType = 'image' maxImageWidth='100px' maxImageHeight = '100px'
-                allowedFileTypes=['png'] autoReplace = true -->
-                <input type="file" id="uploadImg" onchange="xmTanUploadImg(this)" accept="/png,/jpg">
-                <a href="javascript:void()" download="picture.jpg" id="xmTanDownload">点击下载</a>
+                <button type="submit" class="btn btn-success">保存头像</button>
               </div>
-              <!-- <img class="avatar" width="150" height="150" src="{{user.avatar}}" alt="" id="preview">
-              <input type="file" accept="/png,/jpg" id="picUpload" name="file" style="display: none;">
-              <div>
-                <button type="button" class="btn btn-light" id="upfile_btn" style="font-size: 14px;">
-                  Upload new picture
-                </button> -->
-              </div>
-            </dd>
-          </dl>
         </form>
       </div>
     </div>
@@ -75,9 +63,9 @@
 
 
 {{block 'script'}}
-<script src="./node_modules/bootstrap-fileinput/css/fileinput.min.css"></script>
-<script src="./node_modules/bootstrap-fileinput/js/fileinput.min.js"></script>
-<script src="./node_modules/bootstrap-fileinput/js/locales/zh.js"></script>
+<script src="/node_modules/bootstrap-fileinput/css/fileinput.min.css"></script>
+<script src="/node_modules/bootstrap-fileinput/js/fileinput.min.js"></script>
+<script src="/node_modules/bootstrap-fileinput/js/locales/zh.js"></script>
 <script src="/public/js/laydate/laydate.js"></script>
 <script>
   laydate.render({
@@ -129,14 +117,17 @@
   })
 
   // 使用bootstrap-fileinput来完成点击图片时进行图片的切换
+  var formData;
   function xmTanUploadImg(obj) {
       console.log(obj);
-      var file = obj.files[0];
-      console.log(file);
+      let imgFile = obj.files[0];
+      formData = new FormData();
+      formData.append('avatar', imgFile)
+      console.log('imgFile',imgFile, 'formData为',formData.get('avatar'));
       var reader = new FileReader();
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(imgFile);
       reader.onload = function (e) {    
-          console.log(e);
+          console.log('e为', e);
           //成功读取文件
           var img = document.getElementById("selectImg");
           img.src = e.target.result;   //或 img.src = this.result / e.target == this
@@ -144,10 +135,41 @@
           //实现点击下载图片功能
           var xmTanDownload =  document.getElementById("xmTanDownload");
           xmTanDownload.setAttribute("href", e.target.result);  //给a标签设置href
-          xmTanDownload.setAttribute("download", file.name)
-          console.log(file.name);
+          xmTanDownload.setAttribute("download", imgFile.name)
+          console.log(imgFile.name);
+          // console.log(xmTanDownload.href);
       };
     }
+    $('#upavatar').on('submit', function(e) {
+    e.preventDefault()
+    // let formData = $(this).serialize();
+    console.log('11111111', formData.get('avatar'));
+    let formDataInput = formData;
+    $.ajax({
+      url: '/settings/upavatar',
+      dataType: 'json',
+      data: formDataInput,
+      cache: false, //上传文件不需要缓存
+      processData: false, // 告诉jQuery不要去处理发送的数据
+      contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+      type: 'post',
+      async: true,
+      success: function(data) {
+        console.log(data);
+        console.log(data.filePath);
+        // 设置图片预览功能
+        // $('#xxx').attr('src',data.filePath);
+        if(data.err_code === 0) {
+          window.alert('头像更改成功！')
+          window.location.reload();
+          // window.location.href = '/'
+        }else {
+          window.alert('头像更改失败！')
+          window.location.reload();
+        }
+      }
+    })
+  })
 </script>
   
 {{/block}}
