@@ -49,10 +49,10 @@
         <form enctype="multipart/form-data" method="post" name="fileInfo" id="upavatar">
               <img src="{{user.avatar}}" alt="" id="selectImg" class="head-img" name="selectImg" style="max-width: 150px; max-height: 150px;">
               <input type="file" id="uploadImg" onchange="xmTanUploadImg(this)" name="selectImgInput" accept="/png,/jpg">
-              <a href="javascript:void()" download="picture.jpg" id="xmTanDownload">点击下载</a>
+              <a href="javascript:void()" download="picture.jpg" id="xmTanDownload" style="display: none;">点击下载</a>
               <img  id="xxx" src="" alt="">
               <div>
-                <button type="submit" class="btn btn-success">保存头像</button>
+                <button type="submit" class="btn btn-success" id="submitButton" disabled="true">保存头像</button>
               </div>
         </form>
       </div>
@@ -63,7 +63,7 @@
 
 
 {{block 'script'}}
-<script src="/node_modules/bootstrap-fileinput/css/fileinput.min.css"></script>
+<!-- <script src="/node_modules/bootstrap-fileinput/css/fileinput.min.css"></script> -->
 <script src="/node_modules/bootstrap-fileinput/js/fileinput.min.js"></script>
 <script src="/node_modules/bootstrap-fileinput/js/locales/zh.js"></script>
 <script src="/public/js/laydate/laydate.js"></script>
@@ -107,10 +107,13 @@
     })
   })
 
-
   // 使用bootstrap-fileinput来完成点击图片时进行图片的切换
   var formData;
   function xmTanUploadImg(obj) {
+      // var submitButton =  document.getElementById("submitButton");
+      // submitButton.setAttribute("disabled", false)
+      $('#submitButton').attr('disabled', false)
+
       console.log(obj);
       let imgFile = obj.files[0];
       formData = new FormData();
@@ -126,6 +129,7 @@
 
           //实现点击下载图片功能
           var xmTanDownload =  document.getElementById("xmTanDownload");
+          xmTanDownload.style.display = 'inline';
           xmTanDownload.setAttribute("href", e.target.result);  //给a标签设置href
           xmTanDownload.setAttribute("download", imgFile.name)
           console.log(imgFile.name);
