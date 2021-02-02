@@ -99,6 +99,7 @@
           // 修改成功
           window.alert('信息保存成功')
           window.location.href = '/'
+          // window.location.reload();
         }else {
           window.alert('信息修改失败')
         }
@@ -106,15 +107,6 @@
     })
   })
 
-  
-  $('#preview').on('click',function(e){
-    $('#picUpload').click()
-  })
-  $('#preview').hover(function(){
-    $(this).css("opacity", "0.5").append("更换头像")
-  },function(){
-    $(this).css('opacity','1')
-  })
 
   // 使用bootstrap-fileinput来完成点击图片时进行图片的切换
   var formData;

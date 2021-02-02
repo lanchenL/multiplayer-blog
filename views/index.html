@@ -10,7 +10,7 @@
         {{ if user }}
             <div class="media-left">
               <a href="#">
-                <img width="40" height="40" class="media-object" src="{{user.avatar}}" alt="">
+                <img width="40" height="40" class="media-object" src="{{topic.publisher_avatar}}" alt="">
               </a>
             </div>
         {{ else }}
@@ -20,7 +20,7 @@
           <input type="text" value="{{ topic.id }}" id="topic_id" style="display: none;">
           <div class="media-title" style="position: relative;">
             <!-- <h4 class="media-heading"><a href="javascript:void(0)" id="detail">{{ topic.title }}</a></h4> -->
-            <a href="/topics/show?id={{topic.id}}&p_id={{topic.publisher_id}}" id="detail">{{ topic.title }}</a>
+            <a href="/topics/show?id={{topic.id}}&p_id={{topic.publisher_id}}" id="detail" style="margin-left: 5px;">{{ topic.title }}</a>
             <span style="position: absolute; right: 20%;">发表人：{{topic.publisher}}</span>
           </div>
           <div class="media-content" style="position: relative;">

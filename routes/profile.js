@@ -5,6 +5,8 @@ var path = require('path')
 var fs = require('fs')
 
 
+var Topic = require('../db/topic')
+
 var md5 = require('blueimp-md5')
 const { route } = require('./topic')
 var formidable = require('formidable');
@@ -44,6 +46,15 @@ router.post('/settings/profile', function(req, res, next) {
     if(err) {
       next(err)
     }
+    // User.findById({
+    //   _id: req.session.user._id
+    // }, function(err, user) {
+    //   if(err) {
+    //     return next(err);
+    //   }
+    //   console.log('topic的user为：', user);
+    //   req.session.user = user;
+    // })
     res.status(200).json({
       err_code: 0,
       message: '改修的信息提交成功'
@@ -52,7 +63,7 @@ router.post('/settings/profile', function(req, res, next) {
 })
 
 // 修改头像
-router.post('/settings/upavatar', function(req, res) {
+router.post('/settings/upavatar', function(req, res, next) {
   console.log('进入修改头像服务中');
   console.log(req.session.user._id);
 
@@ -99,6 +110,15 @@ router.post('/settings/upavatar', function(req, res) {
                 }
                 console.log('更新头像成功!!');
                 // console.log(user.avatar);
+                // 更新topic的头像
+                // Topic.findOne({
+                //   publisher_id: req.session.user._id
+                // },  function(err, message1) {
+                //   if(err) {
+                //     return next(err);
+                //   }
+                //   console.log('message1', message1);
+                // })
               })
             })
             res.send({ 

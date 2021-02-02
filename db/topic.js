@@ -26,6 +26,9 @@ var topicSchema = new Schema({
   publisher: {
     type: String
   },
+  publisher_avatar: {
+    type: String
+  },
   createtime: {
     type: String
   },

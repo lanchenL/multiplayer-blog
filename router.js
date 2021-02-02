@@ -15,25 +15,40 @@ var router = express.Router()
 // 设置路由
 router.get('/', function (req, res) {
   console.log(req.session.user);
-  
-    Topic.find(function(err, topics) {
+
+  var sessionUser;
+  if(req.session.user){
+    User.findById({
+      _id: req.session.user._id
+    }, function(err, user) {
+      if(err) {
+        return next(err);
+      }
+      console.log('topic的user为：', user);
+      sessionUser = user;
+      req.session.user = user;
+      console.log('req.session.user为：', req.session.user);
+    })
+  }else {
+    sessionUser = req.session.user
+  }
+
+  // console.log('req.session.user为为为：', req.session.user);
+  Topic.find(function(err, topics) {
+    if(err) {
+      console.log(err);
+    }
+    User.find(function(err, usered) {
       if(err) {
         console.log(err);
       }
-      User.find(function(err, usered) {
-        if(err) {
-          console.log(err);
-        }
-        res.render('index.html', {
-          user: req.session.user,
-          topics: topics,
-          usered: usered
-        })
+      res.render('index.html', {
+        user: sessionUser,
+        topics: topics,
+        usered: usered
       })
-      
-      
     })
-  
+  })
 })
 
 router.get('/login', function(req, res) {
