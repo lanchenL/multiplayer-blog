@@ -137,31 +137,31 @@
     // let formData = $(this).serialize();
     console.log('11111111', formData.get('avatar'));
     let formDataInput = formData;
-    $.ajax({
-      url: '/settings/upavatar',
-      dataType: 'json',
-      data: formDataInput,
-      cache: false, //上传文件不需要缓存
-      processData: false, // 告诉jQuery不要去处理发送的数据
-      contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-      type: 'post',
-      async: true,
-      success: function(data) {
-        console.log(data);
-        console.log(data.filePath);
-        // 设置图片预览功能
-        // $('#xxx').attr('src',data.filePath);
-        if(data.err_code === 0) {
-          window.alert('头像更改成功！')
-          window.location.reload();
-          // window.location.href = '/'
-        }else {
-          window.alert('头像更改失败！')
-          window.location.reload();
+      $.ajax({
+        url: '/settings/upavatar',
+        dataType: 'json',
+        data: formDataInput,
+        cache: false, //上传文件不需要缓存
+        processData: false, // 告诉jQuery不要去处理发送的数据
+        contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+        type: 'post',
+        async: true,
+        success: function(data) {
+          console.log(data);
+          console.log(data.filePath);
+          // 设置图片预览功能
+          // $('#xxx').attr('src',data.filePath);
+          if(data.err_code === 0) {
+            window.alert('头像更改成功！')
+            window.location.reload();
+            // window.location.href = '/'
+          }else {
+            window.alert('头像更改失败！')
+            window.location.reload();
+          }
         }
-      }
+      })
     })
-  })
 </script>
   
 {{/block}}

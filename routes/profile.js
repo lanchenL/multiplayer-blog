@@ -109,15 +109,40 @@ router.post('/settings/upavatar', function(req, res, next) {
                   next(err);
                 }
                 console.log('更新头像成功!!');
+                let message1 = message
                 // console.log(user.avatar);
-                // 更新topic的头像
-                // Topic.findOne({
-                //   publisher_id: req.session.user._id
-                // },  function(err, message1) {
+                // 更新之前发布过评论的头像
+                Topic.find(function(err, message1) {
+                  if(err) {
+                    return next(err);
+                  }
+                  console.log('message1', message1, typeof(message1));
+                  message1.forEach((item) => {
+                    Topic.update({
+                      "publisher_id": req.session.user._id
+                    }, {
+                      $set: {"publisher_avatar": user.avatar}
+                    }, {
+                      multi:true  //全部替换
+                    }, function(err) {
+                      if(err) {
+                        console.log(err);
+                        console.log('没有发布过评论');
+                      }
+                      console.log('全部更新头像！！');
+                    })
+                  })
+                })
+                // Topic.update({
+                //   _id: req.session.user._id
+                // },{
+                //   publisher_avatar: user.avatar
+                // },
+                // {multi:true}, function(err) {
                 //   if(err) {
-                //     return next(err);
+                //     console.log(err);
                 //   }
-                //   console.log('message1', message1);
+                //   console.log('更新评论的头像');
                 // })
               })
             })

@@ -38,6 +38,7 @@ router.get('/', function (req, res) {
     if(err) {
       console.log(err);
     }
+    console.log('topic为：', topics);
     User.find(function(err, usered) {
       if(err) {
         console.log(err);
