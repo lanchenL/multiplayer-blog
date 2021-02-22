@@ -17,7 +17,7 @@
             <img width="40" height="40" class="media-object" src="../public/img/luo.jpg" alt="">
         {{ /if }}
         <div class="media-body" >
-          <input type="text" value="{{ topic.id }}" id="topic_id" style="display: none;">
+          <input type="text" value="{{ topic.id }}"  style="display: none;">
           <div class="media-title" style="position: relative;">
             <!-- <h4 class="media-heading"><a href="javascript:void(0)" id="detail">{{ topic.title }}</a></h4> -->
             <a href="/topics/show?id={{topic.id}}&p_id={{topic.publisher_id}}" id="detail" style="margin-left: 5px;">{{ topic.title }}</a>

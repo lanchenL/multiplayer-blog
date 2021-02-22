@@ -4,6 +4,7 @@ var Topic = require('../db/topic')
 var Comment = require('../db/comment')
 var User = require('../db/user') 
 var Funs = require('../db/fun')
+var Support = require('../db/support')
 
 var router = express.Router()
 
@@ -40,7 +41,7 @@ router.get('/topics/show', function(req, res, next) {
   if(req.session.user) {   // 查看是否登录了
     Topic.findById(req.query.id, function(err, topic) {
       if(err) {
-        next(err)
+        return next(err)
       }
       topic.readNum += 1;
       console.log(topic);
@@ -90,7 +91,286 @@ router.post('/comment', function(req, res, next) {
   })
 })
 
+// 添加点赞功能
+router.get('/getSupport', function(req, res, next) {
+  console.log('进入点赞页面');
+  console.log(req.query);
+  let flag1;
+  let flag0;
+  let body = req.query;
+  let sessionUSerId = req.session.user._id;
+  console.log('sessionUSerId',sessionUSerId);
+  Support.find({
+    $and: [
+      {
+        comment_id: body.comment_id
+      },
+      {
+        support_id: req.session.user._id
+      }
+    ]
+  }, function(err, supportData) {
+    if(err) {
+      return next(err)
+    }
+    console.log('supportData为:' ,supportData, supportData.length);
+    if(supportData.length == 0) {
+      console.log('用户没有点赞过，而且也没保存点赞信息');
+      Comment.findById(body.comment_id, function(err, comments) {
+        if(err) {
+          return next(err); 
+        }
+        console.log('查询到这条评论信息');
+        if(body.stage == 1) {
+          comments.like += 1; // 在没有点赞的情况下点赞
+          flag1 = true;
+        }else {
+          comments.like -= 1; // 在没有点赞的情况下不点赞 
+          flag0 = true
+        }
+        console.log(flag1, flag0);
+        console.log(comments.like);
+        Comment.updateOne({
+            _id: body.comment_id
+          }, {
+            like: comments.like
+          }, function(err) {
+            if(err) {
+              return next(err);
+            }
+            console.log('更新点赞成功');
+            var nSupport = new Support({comment_id: body.comment_id, support_id: sessionUSerId})
+            nSupport.save({comment_id: body.comment_id, support_id: sessionUSerId}, function(err, message) {
+              if(err) {
+                return next(err);
+              }
+              console.log('保存点赞信息成功');
+              res.status(200).json({
+                err_code: 0,
+                message: 'sava support message is success'
+              })
+            })
+          }
+        )
+        
+      })
+     
+    }else {
+      console.log('用户点赞过！');
+      console.log(flag1,flag0);
+      Comment.findById(body.comment_id, function(err, comments) {
+        if(err) {
+          return next(err);
+        }
+        
+        Comment.findById(body.comment_id, function(err, comments) {
+          if(err) {
+            return next(err);
+          }
+          console.log('查询到这条评论信息');
+         
+          if(body.stage == 1) {
+            
+            if(flag1 == true) {
+              comments.like = comments.like;
+            }else {
+              comments.like += 1; // 在已经点赞的情况下再进行点赞
+              flag1 = true;
+            }
+          }else {
+            if(flag0 == true) {
+              comments.like = comments.like;
+            }else {
+              comments.like -= 1; // 在已经点赞的情况下不点赞
+              flag0 = true;
+            }
+          }
+          console.log(flag1, flag0);
+          console.log(comments.like);
+          
+          Comment.updateOne({
+              _id: body.comment_id
+            }, {
+              like: comments.like
+            }, function(err) {
+              if(err) {
+                return next(err);
+              }
+              console.log('更新点赞成功');
+              Support.updateOne({comment_id: body.comment_id},{
+                like: comments.like
+              }, function(err) {
+                if(err) {
+                  return next(err);
+                }
+                console.log('更新点赞信息保存成功');
+                res.status(200).json({
+                  err_code: 0,
+                  message: 'sava support message is success'
+                })
+              })
+            }
+          )
+        })
+      })
+    }
+  })
+  // Support.findOne({
+  //   $and: [
+  //     {
+  //       comment_id: body.comment_id
+  //     },
+  //     {
+  //       support_id: req.session.user._id
+  //     }
+  //   ]
+  // }, function(err, supportData) {
+  //   if(err) {
+  //     return next(err)
+  //   }
+  //   console.log(supportData);
+  //   if(!supportData) {
+  //     console.log('用户没有点赞过！');
+  //     Comment.findById(body.comment_id, function(err, comments) {
+  //       if(err) {
+  //         return next(err)
+  //       }
+  //       console.log('查询到了这条评论', comments);
+  //       if(body.stage == 1) {
+  //           comments.like += 1;
+  //           flag = true;
+  //         }else {
+  //           comments.like -= 1;
+  //           flag = true;
+  //         }
+  //         Comment.updateOne({
+  //           _id: body.comment_id
+  //         }, {
+  //           like: comments.like
+  //         }, function(err) {
+  //           if(err) {
+  //             return next(err);
+  //           }
+  //           console.log('更新点赞成功！！', comments.like);
+  //           var nSupport = new Support({comment_id: body.comment_id, support_id: sessionUSerId})
+  //           nSupport.save({comment_id: body.comment_id, support_id: sessionUSerId}, function(err, message) {
+  //             if(err) {
+  //               return next(err);
+  //             }
+  //             console.log('保存点赞信息成功');
+  //             res.status(200).json({
+  //             err_code: 0,
+  //             message: 'sava support is success'
+  //           })
+              
+  //           })
+  //         })
+  //     })
+  //   }else {
+  //     console.log('用户点赞过！');
+  //     Comment.findById(body.comment_id, function(err, comments) {
+  //       if(err) {
+  //         return next(err)
+  //       }
+  //       console.log('查询到了这条评论', comments);
+        
+  //         if(body.stage == 1 && flag == true) {
+  //           comments.like = comments.like;
+  //         }else if(body.stage == 1 && flag == false) {
+  //           comments.like += 1;
+  //           flag = true
+  //           console.log(flag);
+  //         }else if(body.stage == 0 && flag == true) {
+  //           comments.like = comments.like;
+  //         }else if(body.stage == 0 && flag == false){
+  //           comments.like += 1;
+  //           flag = true
+  //           console.log(flag);
+  //         }
 
+  //         console.log(flag);
+  //         Comment.updateOne({
+  //           _id: body.comment_id
+  //         }, {
+  //           like: comments.like
+  //         }, function(err) {
+  //           if(err) {
+  //             return next(err);
+  //           }
+  //           console.log('更新点赞成功！！', comments.like);
+            
+  //           Support.updateOne({comment_id: body.comment_id},{
+  //             like: comments.like
+  //           }, function(err, message) {
+  //             if(err) {
+  //               return next(err);
+  //             }
+  //             console.log('更新点赞信息保存成功');
+  //             res.status(200).json({
+  //               err_code: 1,
+  //               message: 'sava nonsupport is success'
+  //             })
+  //           })
+  //         })
+  //     })
+  //   }
+  // })
+
+
+  // Support.findOne({
+  //   comment_id: body.comment_id
+  // }, function(err, supportData) {
+  //   if(err) {
+  //     return next(err);
+  //   }
+  //   if(!supportData) {
+  //     Comment.findById(body.comment_id, function(err, comments) {
+  //       if(err) {
+  //         return next(err)
+  //       }
+  //       console.log(comments);
+  //       if(comments) {
+  //         console.log('有此条回复');
+  //         if(body.status == 1) {
+  //           comments.like += 1;
+  //         }else {
+  //           comments.like -= 1;
+  //         }
+  //         Comment.updateOne({
+  //           _id: body.comment_id
+  //         }, {
+  //           like: comments.like
+  //         }, function(err) {
+  //           if(err) {
+  //             return next(err);
+  //           }
+  //           console.log('更新点赞成功！！', comments.like);
+  //           var nSupport = new Support({comment_id: body.comment_id, support_id: body.user_id})
+  //           nSupport.save({comment_id: body.comment_id, support_id: body.user_id}, function(err, message) {
+  //             if(err) {
+  //               return next(err);
+  //             }
+  //             console.log('保存点赞信息成功');
+  //           })
+  //           // res.status(200).json({
+  //           //   err_code: 0,
+  //           //   message: 'fan is success'
+  //           // })
+  //         })
+  //       }else {
+  //         console.log('没有回复过');
+  //       }
+  //     })
+  //   }else {
+  //     console.log('已经点赞过了！');
+  //     // res.redirect('/topics/show')
+  //     res.redirect('/')
+  //   }
+  // })
+})
+
+
+// 添加粉丝
 router.get('/getFuns', function(req, res, next) {
   console.log('添粉成功');
   console.log(req.query);

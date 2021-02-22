@@ -25,7 +25,8 @@ var commentSchema = new Schema({
     type: String
   },
   like: {
-    type: String
+    type: Number,
+    default: 0
   }
 })
 

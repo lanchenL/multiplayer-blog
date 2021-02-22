@@ -128,6 +128,7 @@ router.post('/settings/upavatar', function(req, res, next) {
                       if(err) {
                         console.log(err);
                         console.log('没有发布过评论');
+                        return next(err)
                       }
                       console.log('全部更新头像！！');
                     })
