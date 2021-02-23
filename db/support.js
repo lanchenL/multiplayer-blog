@@ -15,6 +15,12 @@ var supportSchema = new Schema({
     },
     support_id: {
         type: String
+    },
+    support_1: {
+        type: Number
+    },
+    support_0: {
+        type: Number
     }
 })
 

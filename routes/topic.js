@@ -95,8 +95,8 @@ router.post('/comment', function(req, res, next) {
 router.get('/getSupport', function(req, res, next) {
   console.log('进入点赞页面');
   console.log(req.query);
-  let flag1;
-  let flag0;
+  let flag1 = 0;
+  let flag0 = 0;
   let body = req.query;
   let sessionUSerId = req.session.user._id;
   console.log('sessionUSerId',sessionUSerId);
@@ -123,10 +123,10 @@ router.get('/getSupport', function(req, res, next) {
         console.log('查询到这条评论信息');
         if(body.stage == 1) {
           comments.like += 1; // 在没有点赞的情况下点赞
-          flag1 = true;
+          flag1 = 1;  // 表示点赞
         }else {
           comments.like -= 1; // 在没有点赞的情况下不点赞 
-          flag0 = true
+          flag0 = 1;  // 表示不点赞
         }
         console.log(flag1, flag0);
         console.log(comments.like);
@@ -139,8 +139,8 @@ router.get('/getSupport', function(req, res, next) {
               return next(err);
             }
             console.log('更新点赞成功');
-            var nSupport = new Support({comment_id: body.comment_id, support_id: sessionUSerId})
-            nSupport.save({comment_id: body.comment_id, support_id: sessionUSerId}, function(err, message) {
+            var nSupport = new Support({comment_id: body.comment_id, support_id: sessionUSerId, support_1: flag1, support_0: flag0})
+            nSupport.save({comment_id: body.comment_id, support_id: sessionUSerId, support_1: flag1, support_0: flag0}, function(err, message) {
               if(err) {
                 return next(err);
               }
@@ -157,61 +157,59 @@ router.get('/getSupport', function(req, res, next) {
      
     }else {
       console.log('用户点赞过！');
-      console.log(flag1,flag0);
+      console.log('标记:',supportData[0].support_1,supportData[0].support_0);
       Comment.findById(body.comment_id, function(err, comments) {
         if(err) {
           return next(err);
         }
-        
-        Comment.findById(body.comment_id, function(err, comments) {
-          if(err) {
-            return next(err);
-          }
-          console.log('查询到这条评论信息');
-         
-          if(body.stage == 1) {
-            
-            if(flag1 == true) {
-              comments.like = comments.like;
-            }else {
-              comments.like += 1; // 在已经点赞的情况下再进行点赞
-              flag1 = true;
-            }
+        console.log('查询到这条评论信息');
+       
+        if(body.stage == 1) {
+
+          if(supportData[0].support_1 == 1) {
+            comments.like = comments.like;
           }else {
-            if(flag0 == true) {
-              comments.like = comments.like;
-            }else {
-              comments.like -= 1; // 在已经点赞的情况下不点赞
-              flag0 = true;
-            }
+            comments.like += 1; // 在已经不支持的情况下再进行点赞
+            supportData[0].support_1 = 1;
+            supportData[0].support_0 = 0;
           }
-          console.log(flag1, flag0);
-          console.log(comments.like);
-          
-          Comment.updateOne({
-              _id: body.comment_id
-            }, {
-              like: comments.like
+        }else {
+          if(supportData[0].support_0 == 1) {
+            comments.like = comments.like;
+          }else {
+            comments.like -= 1; // 在已经支持的情况下不点赞
+            supportData[0].support_0 = 1;
+            supportData[0].support_1 = 0;
+          }
+        }
+        // console.log(flag1, flag0);
+        console.log(comments.like);
+        
+        Comment.updateOne({
+            _id: body.comment_id
+          }, {
+            like: comments.like
+          }, function(err) {
+            if(err) {
+              return next(err);
+            }
+            console.log('更新点赞成功');
+            Support.updateOne({comment_id: body.comment_id},{
+              like: comments.like,
+              support_1: supportData[0].support_1,
+              support_0: supportData[0].support_0
             }, function(err) {
               if(err) {
                 return next(err);
               }
-              console.log('更新点赞成功');
-              Support.updateOne({comment_id: body.comment_id},{
-                like: comments.like
-              }, function(err) {
-                if(err) {
-                  return next(err);
-                }
-                console.log('更新点赞信息保存成功');
-                res.status(200).json({
-                  err_code: 0,
-                  message: 'sava support message is success'
-                })
+              console.log('更新点赞信息保存成功');
+              res.status(200).json({
+                err_code: 0,
+                message: 'sava support message is success'
               })
-            }
-          )
-        })
+            })
+          }
+        )
       })
     }
   })
