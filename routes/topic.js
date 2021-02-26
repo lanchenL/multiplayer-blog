@@ -95,8 +95,10 @@ router.post('/comment', function(req, res, next) {
 router.get('/getSupport', function(req, res, next) {
   console.log('进入点赞页面');
   console.log(req.query);
-  let flag1 = 0;
-  let flag0 = 0;
+  let flag1 = 0; // 表示支持
+  let flag0 = 0; // 表示不支持
+  mark_support = 0;  // 支持时的标记
+  mark_noSupport = 0; // 不支持时的标记
   let body = req.query;
   let sessionUSerId = req.session.user._id;
   console.log('sessionUSerId',sessionUSerId);
@@ -122,11 +124,15 @@ router.get('/getSupport', function(req, res, next) {
         }
         console.log('查询到这条评论信息');
         if(body.stage == 1) {
-          comments.like += 1; // 在没有点赞的情况下点赞
+          comments.like += 1; // 第一次点击支持
           flag1 = 1;  // 表示点赞
+          mark_support = 1; // 支持的标记 1为支持，0为支持后取消支持，-1表示不支持
+          mark_noSupport = -1; // 支持的标记 1为支持，0为支持后取消支持，-1表示不支持
         }else {
-          comments.like -= 1; // 在没有点赞的情况下不点赞 
-          flag0 = 1;  // 表示不点赞
+          comments.like -= 1; // 第一次点击不支持
+          flag0 = 1;  // 表示不支持
+          mark_support = -1;
+          mark_noSupport = 1;
         }
         console.log(flag1, flag0);
         console.log(comments.like);
@@ -139,8 +145,22 @@ router.get('/getSupport', function(req, res, next) {
               return next(err);
             }
             console.log('更新点赞成功');
-            var nSupport = new Support({comment_id: body.comment_id, support_id: sessionUSerId, support_1: flag1, support_0: flag0})
-            nSupport.save({comment_id: body.comment_id, support_id: sessionUSerId, support_1: flag1, support_0: flag0}, function(err, message) {
+            var nSupport = new Support({
+              comment_id: body.comment_id, 
+              support_id: sessionUSerId, 
+              support_1: flag1, 
+              support_0: flag0,
+              mark_support: mark_support,
+              mark_noSupport: mark_noSupport
+            })
+            nSupport.save({
+              comment_id: body.comment_id, 
+              support_id: sessionUSerId, 
+              support_1: flag1, 
+              support_0: flag0,
+              mark_support: mark_support,
+              mark_noSupport: mark_noSupport
+            }, function(err, message) {
               if(err) {
                 return next(err);
               }
@@ -170,16 +190,35 @@ router.get('/getSupport', function(req, res, next) {
             comments.like = comments.like;
           }else {
             comments.like += 1; // 在已经不支持的情况下再进行点赞
-            supportData[0].support_1 = 1;
-            supportData[0].support_0 = 0;
+            if(supportData[0].mark_support == -1) {
+              supportData[0].mark_support = 0;
+              supportData[0].mark_noSupport = 0;
+              supportData[0].support_1 = 0;
+              supportData[0].support_0 = 0;
+            }else if(supportData[0].mark_support == 0){
+              supportData[0].mark_support = 1;
+              supportData[0].mark_noSupport = -1;
+              supportData[0].support_1 = 1;
+              supportData[0].support_0 = 0;
+            }
+            
           }
         }else {
           if(supportData[0].support_0 == 1) {
             comments.like = comments.like;
           }else {
             comments.like -= 1; // 在已经支持的情况下不点赞
-            supportData[0].support_0 = 1;
-            supportData[0].support_1 = 0;
+            if(supportData[0].mark_noSupport == -1) {
+              supportData[0].mark_support = 0;
+              supportData[0].mark_noSupport = 0;
+              supportData[0].support_1 = 0;
+              supportData[0].support_0 = 0;
+            }else if(supportData[0].mark_support == 0){
+              supportData[0].mark_support = -1;
+              supportData[0].mark_noSupport = 1;
+              supportData[0].support_1 = 0;
+              supportData[0].support_0 = 1;
+            }
           }
         }
         // console.log(flag1, flag0);
@@ -197,7 +236,9 @@ router.get('/getSupport', function(req, res, next) {
             Support.updateOne({comment_id: body.comment_id},{
               like: comments.like,
               support_1: supportData[0].support_1,
-              support_0: supportData[0].support_0
+              support_0: supportData[0].support_0,
+              mark_support: supportData[0].mark_support,
+              mark_noSupport: supportData[0].mark_noSupport
             }, function(err) {
               if(err) {
                 return next(err);

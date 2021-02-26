@@ -21,6 +21,12 @@ var supportSchema = new Schema({
     },
     support_0: {
         type: Number
+    },
+    mark_support: {
+        type: Number
+    },
+    mark_noSupport: {
+        type: Number
     }
 })
 
