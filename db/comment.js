@@ -27,6 +27,14 @@ var commentSchema = new Schema({
   like: {
     type: Number,
     default: 0
+  },
+  comment_mark_support: {
+    type: Number,
+    default: 0
+  },
+  comment_mark_noSupport: {
+    type: Number,
+    default: 0
   }
 })
 

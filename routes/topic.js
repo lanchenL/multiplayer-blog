@@ -38,7 +38,29 @@ router.get('/topics/show', function(req, res, next) {
   // console.log(req.query);
   // query的id为topic的，也就是之前帖子的id。pubulish的id为user的，也就是之前发表人的
   // 首先先要登录才能发表评论，然后进入到评论的回复页面
+  let supportStage;
+  let fanStage;
   if(req.session.user) {   // 查看是否登录了
+    Support.find({      // 查询点赞的信息
+      support_id: req.session.user._id
+    }, function(err, supportdata) {
+      if(err) {
+        next(err)
+      }
+      // console.log('supportdata', supportdata);
+      // console.log('req.session.user._id', req.session.user._id);
+      supportStage = supportdata;
+    })
+    Funs.find({
+      user_id: req.query.p_id,
+      fan_id: req.session.user._id
+    }, function(err, fanData) {
+      if(err) {
+        next(err)
+      }
+      // console.log('fanData', fanData);
+      fanStage = fanData;
+    })
     Topic.findById(req.query.id, function(err, topic) {
       if(err) {
         return next(err)
@@ -62,11 +84,14 @@ router.get('/topics/show', function(req, res, next) {
           if(err) {
             next(err)
           }
+          // console.log('supportStage', supportStage);
           res.render('./topic/show.html', {
             topic: topic,
             quser: user,
             comments: comments,
-            user: req.session.user
+            user: req.session.user,
+            supportStage: supportStage,
+            fanStage: fanStage
           })
         })
       })
@@ -221,13 +246,15 @@ router.get('/getSupport', function(req, res, next) {
             }
           }
         }
-        // console.log(flag1, flag0);
+        console.log(supportData[0].mark_support, supportData[0].mark_noSupport);
         console.log(comments.like);
         
         Comment.updateOne({
             _id: body.comment_id
           }, {
-            like: comments.like
+            like: comments.like,
+            comment_mark_support: supportData[0].mark_support,
+            comment_mark_noSupport: supportData[0].mark_noSupport
           }, function(err) {
             if(err) {
               return next(err);
@@ -344,7 +371,7 @@ router.get('/changeComment', function(req, res, next) {
 router.get('/delectComment', function(req, res, next) {
   console.log('删除');
   let body = req.query;
-  console.log(body);
+  // console.log(body);
   Comment.deleteOne({
     _id: body.comment_id
   }, function(err) {
@@ -352,6 +379,14 @@ router.get('/delectComment', function(req, res, next) {
       next(err);
     }
     console.log('删除评论成功！');
+    Support.deleteOne({
+      comment_id: body.comment_id
+    }, function(err) {
+      if(err) {
+        next(err)
+      }
+      console.log('删除评论的点赞信息');
+    })
     res.status(200).json({
       err_code: 0,
       message: 'delect comment is succeed'
