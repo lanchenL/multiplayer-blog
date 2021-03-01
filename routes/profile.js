@@ -85,7 +85,7 @@ router.post('/settings/upavatar', function(req, res, next) {
     var time = '_' + date.getFullYear() + "_" + date.getMonth() + "_" + date.getDay() + "_" + date.getHours() + "_" + date.getMinutes();
     console.log(time);
     form.parse(req, function (err, fields, files) {
-        console.log(files);
+        // console.log(files);
         var file = files.avatar;
         let picName = time + path.extname(file.name);  //extname取文件的后缀名
         fs.rename(file.path, form.uploadDir + picName, function (err) {
@@ -97,7 +97,7 @@ router.post('/settings/upavatar', function(req, res, next) {
               if(err) {
                 next(err);
               }
-              console.log(user);
+              // console.log(user);
               user.avatar = '/public/upload/' +  'brand' + picName;
               console.log(user.avatar);
               User.updateOne({

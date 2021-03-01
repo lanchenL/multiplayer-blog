@@ -55,8 +55,13 @@
           <div class="panel-body" style="border: 1px solid #f1f1f1; position: relative;">
             {{ comment.content }}
             <div style="display: inline;position: absolute;right: 20px;">
-              <a href="" >修改</a>
-              <a href="" >删除</a>
+              <a href="#" onclick="changeComment(this)">修改
+                <input type="text"  name="commentInputValue" value="{{comment.content}}" style="display: none;">
+                <input type="text"  name="commentInputValue" value="{{comment.id}}" style="display: none;">
+              </a>
+              <a href="#"  onclick="delectComent(this)">删除
+                <input type="text"  name="commentInputValue" value="{{comment.id}}" style="display: none;">
+              </a>
             </div>
           </div>
           
@@ -174,6 +179,77 @@
           }
         }
       })
+    }
+
+    // 修改评论
+    // function changeComment(e) {
+    //   let comment_id = e.children[0].value;
+    //   console.log(comment_id);
+    //   let commentID = {'comment_id': comment_id};
+    //   console.log(commentID);
+    //   $.ajax({
+    //     url: '/changeComment',
+    //     dataType: 'json',
+    //     type: 'get',
+    //     data: commentID,
+    //     success: function(data) {
+    //       console.log(data);
+    //     }
+    //   })
+    // }
+
+    // 修改评论
+    function changeComment(e) {
+      console.log('修改评论');
+      let commentText = e.children[0].value;
+      let comment_id = e.children[1].value;
+
+      let result = prompt('请输入要修改的内容', commentText);
+      if(!!result) {
+        console.log('确定修改');
+        let commentData = {'commentText': result,'comment_id': comment_id};
+        $.ajax({
+        url: '/changeComment',
+        dataType: 'json',
+        type: 'get',
+        data: commentData,
+        success: function(data) {
+          console.log(data);
+          if(data.err_code === 0) {
+            alert('修改评论内容成功!')
+            // window.location.href = '/topics/show' // 因为首页需要传参进去才可以正常加载，所以在此处路由不行
+            window.location.reload();
+          }
+        }
+      })
+      }else {
+        console.log('请输入内容!');
+      }
+    }
+
+    function delectComent(e) {
+      console.log('删除');
+      let confirmDelect = window.confirm('确定删除评论！')
+      console.log(confirmDelect);
+      let comment_id = e.children[0].value;
+      let commentData = {'comment_id': comment_id};
+      if(confirmDelect) {
+          $.ajax({
+          url: '/delectComment',
+          dataType: 'json',
+          type: 'get',
+          data: commentData,
+          success: function(data) {
+            console.log(data);
+            if(data.err_code === 0) {
+              alert('此条评论删除成功！')
+              location.reload();
+            }
+          }
+        })
+      }else {
+        console.log('已经取消删除评论!');
+      }
     }
   </script>
 </body>

@@ -24,10 +24,10 @@ router.get('/', function (req, res) {
       if(err) {
         return next(err);
       }
-      console.log('topic的user为：', user);
+      // console.log('topic的user为：', user);
       sessionUser = user;
       req.session.user = user;
-      console.log('req.session.user为：', req.session.user);
+      // console.log('req.session.user为：', req.session.user);
     })
   }else {
     sessionUser = req.session.user
@@ -38,7 +38,7 @@ router.get('/', function (req, res) {
     if(err) {
       console.log(err);
     }
-    console.log('topic为：', topics);
+    // console.log('topic为：', topics);
     User.find(function(err, usered) {
       if(err) {
         console.log(err);
