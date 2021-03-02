@@ -17,7 +17,7 @@ var commentSchema = new Schema({
     type: String,
     required: true
   },
-  from_id: {
+  from_id: {  // 文章的发表者
     type: String,
     requid: true
   },
@@ -27,6 +27,10 @@ var commentSchema = new Schema({
   like: {
     type: Number,
     default: 0
+  },
+  comment_support_id: {
+    type: String,
+    default: ''
   },
   comment_mark_support: {
     type: Number,

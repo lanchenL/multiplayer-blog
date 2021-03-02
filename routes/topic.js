@@ -122,8 +122,13 @@ router.get('/getSupport', function(req, res, next) {
   // console.log(req.query);
   let flag1 = 0; // 表示支持
   let flag0 = 0; // 表示不支持
-  mark_support = 0;  // 支持时的标记
-  mark_noSupport = 0; // 不支持时的标记
+  let mark_support = 0;  // 支持时的标记
+  let mark_noSupport = 0; // 不支持时的标记
+  let supportData_mark_support;
+  let supportData_mark_noSupport;
+  let supportData_support_1;
+  let supportData_support_0;
+
   let body = req.query;
   let sessionUSerId = req.session.user._id;
   console.log('sessionUSerId',sessionUSerId);
@@ -164,7 +169,10 @@ router.get('/getSupport', function(req, res, next) {
         Comment.updateOne({
             _id: body.comment_id
           }, {
-            like: comments.like
+            like: comments.like,
+            comment_mark_support: mark_support,
+            comment_mark_noSupport: mark_noSupport,
+            comment_support_id: sessionUSerId
           }, function(err) {
             if(err) {
               return next(err);
@@ -214,6 +222,7 @@ router.get('/getSupport', function(req, res, next) {
           if(supportData[0].support_1 == 1) {
             comments.like = comments.like;
           }else {
+            console.log('在已经不支持的情况下再进行点赞');
             comments.like += 1; // 在已经不支持的情况下再进行点赞
             if(supportData[0].mark_support == -1) {
               supportData[0].mark_support = 0;
@@ -229,16 +238,18 @@ router.get('/getSupport', function(req, res, next) {
             
           }
         }else {
+          console.log('supportData[0].mark_support', supportData[0].mark_support,'no',supportData[0].mark_noSupport);
           if(supportData[0].support_0 == 1) {
             comments.like = comments.like;
           }else {
+            console.log('在已经支持的情况下不点赞');
             comments.like -= 1; // 在已经支持的情况下不点赞
             if(supportData[0].mark_noSupport == -1) {
               supportData[0].mark_support = 0;
               supportData[0].mark_noSupport = 0;
               supportData[0].support_1 = 0;
               supportData[0].support_0 = 0;
-            }else if(supportData[0].mark_support == 0){
+            }else if(supportData[0].mark_noSupport == 0){
               supportData[0].mark_support = -1;
               supportData[0].mark_noSupport = 1;
               supportData[0].support_1 = 0;
@@ -246,7 +257,11 @@ router.get('/getSupport', function(req, res, next) {
             }
           }
         }
-        console.log(supportData[0].mark_support, supportData[0].mark_noSupport);
+        console.log('supportData[0].mark_support',supportData[0].mark_support, 
+        'supportData[0].mark_noSupport',supportData[0].mark_noSupport,
+        'supportData[0].support_1',supportData[0].support_1,
+        'supportData[0].support_0', supportData[0].support_0
+        );
         console.log(comments.like);
         
         Comment.updateOne({
@@ -260,7 +275,14 @@ router.get('/getSupport', function(req, res, next) {
               return next(err);
             }
             console.log('更新点赞成功');
-            Support.updateOne({comment_id: body.comment_id},{
+            console.log('supportData[0].mark_support',supportData[0].mark_support, 
+        'supportData[0].mark_noSupport',supportData[0].mark_noSupport,
+        'supportData[0].support_1',supportData[0].support_1,
+        'supportData[0].support_0', supportData[0].support_0
+        );
+            Support.updateOne({
+              comment_id: body.comment_id
+            },{
               like: comments.like,
               support_1: supportData[0].support_1,
               support_0: supportData[0].support_0,
@@ -342,6 +364,47 @@ router.get('/getFuns', function(req, res, next) {
   })
 })
 
+// 取消关注
+router.get('/loseFuns', function(req, res, next) {
+  console.log(req.query);
+  Funs.deleteOne({
+    $and: [
+      {
+        user_id: req.query.user_id
+      },
+      {
+        fan_id: req.query.fan_id
+      }
+    ]
+  }, function(err) {
+    if(err) {
+      return next(err);
+    }
+    console.log('取消关注请求成功');
+    User.findById(req.query.user_id, function(err, user) {
+      if(err) {
+        return next(err)
+      }
+      console.log(user);
+      user.fans -= 1;
+      User.updateOne({
+        _id: req.query.user_id
+      }, {
+        fans: user.fans
+      }, function(err) {
+        if(err) {
+          return next(err);
+        }
+        console.log('更新用户的粉丝数完成');
+      })
+    })
+    res.status(200).json({
+      err_code: 0,
+      message:  'delete  fan is ok'
+    })
+  })
+})
+
 // 修改评论
 router.get('/changeComment', function(req, res, next) {
   console.log(req.query);
@@ -368,6 +431,8 @@ router.get('/changeComment', function(req, res, next) {
   })
   // res.redirect('/')
 })
+
+// 删除评论
 router.get('/delectComment', function(req, res, next) {
   console.log('删除');
   let body = req.query;
