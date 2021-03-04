@@ -5,6 +5,7 @@ var Comment = require('../db/comment')
 var User = require('../db/user') 
 var Funs = require('../db/fun')
 var Support = require('../db/support')
+var AnswerComment = require('../db/answer_comment')
 
 var router = express.Router()
 
@@ -40,6 +41,7 @@ router.get('/topics/show', function(req, res, next) {
   // 首先先要登录才能发表评论，然后进入到评论的回复页面
   let supportStage;
   let fanStage;
+  let commentAnswer;
   if(req.session.user) {   // 查看是否登录了
     Support.find({      // 查询点赞的信息
       support_id: req.session.user._id
@@ -60,6 +62,15 @@ router.get('/topics/show', function(req, res, next) {
       }
       // console.log('fanData', fanData);
       fanStage = fanData;
+    })
+    AnswerComment.find({
+      comment_pulisher_id: req.query.p_id,
+    }, function(err, answerData) {
+      if(err) {
+        return next(err);
+      }
+      commentAnswer = answerData;
+      // console.log('commentAnswer', commentAnswer);
     })
     Topic.findById(req.query.id, function(err, topic) {
       if(err) {
@@ -91,7 +102,8 @@ router.get('/topics/show', function(req, res, next) {
             comments: comments,
             user: req.session.user,
             supportStage: supportStage,
-            fanStage: fanStage
+            fanStage: fanStage,
+            commentAnswer
           })
         })
       })
@@ -101,7 +113,7 @@ router.get('/topics/show', function(req, res, next) {
   }
 })
 
-
+// 回复评论
 router.post('/comment', function(req, res, next) {
   var commentData = new Comment(req.body)
   // console.log('commentData为', commentData);
@@ -112,6 +124,35 @@ router.post('/comment', function(req, res, next) {
     res.status(200).json({
       err_code: 0,
       message: 'commentData is sava ok'
+    })
+  })
+})
+
+// 回复评论的信息
+router.get('/answer', function(req, res, nexnt) {
+  console.log(req.query);
+  let data = req.query;
+  nAnswerComment = new AnswerComment({
+    comment_id: data.comment_id,
+    answer_content: data.textareaData,
+    comment_pulisher_id: data.comment_pulisher_id,
+    comment_answer_id: data.comment_answer_id,
+    comment_answer_nickname: data.comment_answer_nickname
+  });
+  nAnswerComment.save({
+    comment_id: data.comment_id,
+    answer_content: data.textareaData,
+    comment_pulisher_id: data.comment_pulisher_id,
+    comment_answer_id: data.comment_answer_id,
+    comment_answer_nickname: data.comment_answer_nickname
+  }, function(err) {
+    if(err) {
+      return next(err)
+    }
+    console.log('保存回复信息成功');
+    res.status(200).json({
+      err_code: 0,
+      message: 'comment answer content is save succeed'
     })
   })
 })
@@ -209,7 +250,7 @@ router.get('/getSupport', function(req, res, next) {
       })
      
     }else {
-      console.log('用户点赞过！');
+      console.log('用户点赞过！',supportData[0]);
       // console.log('标记:',supportData[0].support_1,supportData[0].support_0);
       Comment.findById(body.comment_id, function(err, comments) {
         if(err) {
@@ -281,7 +322,8 @@ router.get('/getSupport', function(req, res, next) {
         'supportData[0].support_0', supportData[0].support_0
         );
             Support.updateOne({
-              comment_id: body.comment_id
+              comment_id: body.comment_id,
+              support_id: req.session.user._id
             },{
               like: comments.like,
               support_1: supportData[0].support_1,
@@ -444,13 +486,21 @@ router.get('/delectComment', function(req, res, next) {
       next(err);
     }
     console.log('删除评论成功！');
-    Support.deleteOne({
+    Support.deleteMany({
       comment_id: body.comment_id
     }, function(err) {
       if(err) {
-        next(err)
+        return next(err)
       }
       console.log('删除评论的点赞信息');
+    })
+    AnswerComment.deleteMany({
+      comment_id: body.comment_id
+    }, function(err) {
+      if(err) {
+        return next(err)
+      }
+      console.log('删除评论下面的回复信息成功');
     })
     res.status(200).json({
       err_code: 0,
