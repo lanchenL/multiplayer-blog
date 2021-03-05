@@ -24,7 +24,10 @@ var answerSchema = new Schema({
     },
     comment_answer_nickname: {
       type: String
-    }
+    },
+    comment_answer_createtime: {
+      type: String
+    },
 })
 
 

@@ -137,14 +137,16 @@ router.get('/answer', function(req, res, nexnt) {
     answer_content: data.textareaData,
     comment_pulisher_id: data.comment_pulisher_id,
     comment_answer_id: data.comment_answer_id,
-    comment_answer_nickname: data.comment_answer_nickname
+    comment_answer_nickname: data.comment_answer_nickname,
+    comment_answer_createtime: data.comment_answer_createtime
   });
   nAnswerComment.save({
     comment_id: data.comment_id,
     answer_content: data.textareaData,
     comment_pulisher_id: data.comment_pulisher_id,
     comment_answer_id: data.comment_answer_id,
-    comment_answer_nickname: data.comment_answer_nickname
+    comment_answer_nickname: data.comment_answer_nickname,
+    comment_answer_createtime: data.comment_answer_createtime
   }, function(err) {
     if(err) {
       return next(err)

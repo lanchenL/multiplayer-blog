@@ -247,6 +247,10 @@
               <span>
                 {{ commentAnswerItem.answer_content }}
               </span>
+              <sapn style="position: absolute; right: 20%;">
+                {{commentAnswerItem.comment_answer_createtime}}
+              </sapn>
+
             </div>
             {{ /if }}
           {{ /each }}
@@ -259,6 +263,7 @@
               <input type="text" name="comment_pulisher_id" value="{{comment.from_id}}" readonly style="display: none;">
               <input type="text" name="comment_answer_id" value="{{user._id}}" readonly style="display: none;">
               <input type="text" name="comment_answer_id" value="{{user.nickname}}" readonly style="display: none;">
+              <input type="text" name="createtime" value="createtime" readonly style="display: none;">
 
               <!-- </div> -->
               <a href="#"  type="button" onclick="answer(this)" >回复</a>
@@ -368,13 +373,15 @@
       let comment_pulisher_id = e.parentNode.children[2].value;
       let comment_answer_id = e.parentNode.children[3].value;
       let comment_answer_nickname = e.parentNode.children[4].value;
+      let comment_answer_createtime = e.parentNode.children[5].value  = nowDate;
       console.log(textareaData, comment_id);
       answerData = {
         'textareaData': textareaData, 
         'comment_id': comment_id,
         'comment_pulisher_id': comment_pulisher_id,
         'comment_answer_id': comment_answer_id,
-        'comment_answer_nickname': comment_answer_nickname
+        'comment_answer_nickname': comment_answer_nickname,
+        'comment_answer_createtime': comment_answer_createtime
       };
       $.ajax({
         url: '/answer',
