@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="/public/css/login.css">
+</head>
+
+<body>
+  <div class="main">
+    <div class="header">
+      <a href="/">
+        <img src="/public/img/开心果.png" alt="">
+      </a>
+      <h1>找回密码</h1>
+    </div>
+    
+    <form id="veirfy_form" method="post" action="">
+      <div class="form-group">
+        <label for="email">邮箱</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Email" autofocus>
+      </div>
+      <div class="form-group">
+        <label for="nickname">昵称</label>
+        <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Nickname">
+      </div>
+      <button type="submit" class="btn btn-success btn-block">验证</button>
+    </form>
+    <div class="message">
+      <p>已有账号? <a href="/login">点击登录</a>.</p>
+    </div>
+  </div>
+  <script src="/node_modules/jquery/dist/jquery.js"></script>
+  <script>
+    $('#veirfy_form').on('submit', function (e) {
+      e.preventDefault()
+      var formData = $(this).serialize()
+      $.ajax({
+        url: '/verify',
+        type: 'post',
+        data: formData,
+        dataType: 'json',
+        success: function (data) {
+          console.log(data);
+          if(data.err_code === 0) {
+            console.log('验证信息成功');
+            
+            alert('验证成功，即将进入重置密码页面')
+            location.href = '/reset'
+            
+          }else {
+            alert('信息输入错误，请重新输入！')
+            location.href = '/verify'
+          }
+        }
+      })
+    })
+  </script>
+</body>
+
+</html>

@@ -10,6 +10,7 @@ var Topic = require('../db/topic')
 var md5 = require('blueimp-md5')
 const { route } = require('./topic')
 var formidable = require('formidable');
+const fun = require('../db/fun')
 
 var router = express.Router()
 
@@ -223,6 +224,76 @@ router.post('/settings/admin', function(req, res, next) {
     })
   })
   
+})
+
+router.get('/verify', function(req, res, next) {
+  console.log('进入验证账号和昵称页面');
+  res.render('verify.html')
+})
+
+// 验证账号和昵称
+router.post('/verify', function(req, res, next) {
+  console.log(req.body);
+  let body = req.body;
+  User.find({
+    email: body.email,
+    nickname: body.nickname
+  }, function(err, user) {
+    if(err) {
+      return next(err);
+    }
+    console.log(user);
+    if(user.length !== 0) {
+      console.log('找到此人，验证信息成功');
+      res.status(200).json({
+        err_code: 0,
+        message: 'person message verify is succeed'
+      })
+    }else {
+      console.log('未找到此人');
+      res.status(200).json({
+        err_code: 1,
+        message: 'person message verify is no succeed'
+      })
+    }
+    
+  })
+})
+
+// 进入到设置密码页面
+router.get('/reset', function(req, res, next) {
+  res.render('resetPassword.html', {
+    email: req.query.email
+  })
+})
+// 重置密码
+router.post('/savePassWord', function(req, res, next) {
+  let body = req.body;
+  
+  console.log(body);
+  if(body.npassword === body.cpassword) {
+    let password = md5(md5(body.cpassword));
+    User.updateOne({
+      email: body.email
+    }, {
+      password: password
+    }, function(err) {
+      if(err) {
+        return next(err);
+      }
+      console.log('更新密码成功');
+      res.status(200).json({
+        err_code: 0,
+        message: 'update password is succeed'
+      })
+    })
+  }else {
+    console.log('新旧密码不一致');
+    res.status(200).json({
+      err_code: 1,
+      message: '新旧密码不一致'
+    })
+  }
 })
 
 // 注销按钮

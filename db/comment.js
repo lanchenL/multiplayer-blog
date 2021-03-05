@@ -17,6 +17,9 @@ var commentSchema = new Schema({
     type: String,
     required: true
   },
+  createtime: {
+    type: String
+  },
   from_id: {  // 文章的发表者
     type: String,
     requid: true

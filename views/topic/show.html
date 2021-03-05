@@ -218,6 +218,10 @@
                 {{ /if }} -->
               </a>
             </span>
+            
+            <div class="media-content" >
+              <sapn style="position: absolute; right: 20%;">{{comment.createtime}}</sapn>
+            </div>
           </div>
           <div class="panel-body" style="border: 1px solid #f1f1f1; position: relative;">
             {{ comment.content }}
@@ -281,6 +285,10 @@
             <label for="">文章id</label>
             <input type="text" name="topic_id" value="{{topic.id}}">
           </div>
+          <div class="form-group" style="display: none;">
+            <label for="">发表时间</label>
+            <input type="text" name="createtime" value="getDate()"  id="createtime">
+          </div>
           <button type="submit" class="btn btn-success">回复</button>
         </form>
       </div>
@@ -288,7 +296,11 @@
     </div>
       
   <script src="/node_modules/jquery/dist/jquery.js"></script>
+  <script src="/node_modules/moment/moment.js"></script>
   <script>
+    var nowDate = new Date();
+    nowDate = moment(nowDate).format('YYYY-MM-DD HH:mm:ss');
+    document.getElementById('createtime').value = nowDate;
     $('#comment_form').on('submit', function(e) {
       e.preventDefault();
       var formData = $(this).serialize();
