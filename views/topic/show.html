@@ -6,14 +6,17 @@
   <title>回复评论</title>
   <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
 </head>
-<body style="margin: 0px;padding: 0px;">
-  
-  <h2 class="sub-header" style="text-align: center; margin: 0px 0px; background-color: #c1cec1; height: 58px;">
-    填写内容
-  </h2>
-    <div class="row">
-      <div class="col-md-2" style="background-color: #f1f1f1;"></div>
-      <div class="col-md-8">
+<body style="margin: 0px;padding: 0px;background-color: #f1f1f1;">
+    <div class="row" style="padding: 0px 0px ;margin: 0px 0px;">
+      <div class="col-md-12" style="padding: 0px 0px ;margin: 0px 0px;">
+        <h2 class="sub-header" style="text-align: center; margin: 0px 0px; background-color: #c1cec1; height: 58px; ">
+          填写内容
+        </h2>
+      </div>
+    </div>
+    <div class="row" style="padding: 0px 0px ;margin: 0px 0px;">
+      <div class="col-md-2" ></div>
+      <div class="col-md-8" style="background-color: white;">
         <article class="markdown-body">
           <h1 id="_1"><a name="user-content-_1" href="" class="headeranchor-link" aria-hidden="true"><span
                 class="headeranchor"></span></a>{{topic.title}}</h1>
@@ -186,7 +189,7 @@
         </div>
         {{ /each }}
         
-        <form id="comment_form">
+        <form id="comment_form" style="margin-bottom: 20px;">
           <div class="form-group">
             <label for="">添加回复</label>
             <textarea class="form-control" name="content" id="" cols="10" rows="10"></textarea>
@@ -210,7 +213,7 @@
           <button type="submit" class="btn btn-success">回复</button>
         </form>
       </div>
-      <div class="col-md-2" style="background-color: #f1f1f1;"></div>
+      <div class="col-md-2" ></div>
     </div>
       
   <script src="/node_modules/jquery/dist/jquery.js"></script>
