@@ -28,6 +28,9 @@ var answerSchema = new Schema({
     comment_answer_createtime: {
       type: String
     },
+    topic_id: {
+      type: String
+    }
 })
 
 

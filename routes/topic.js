@@ -64,7 +64,7 @@ router.get('/topics/show', function(req, res, next) {
       fanStage = fanData;
     })
     AnswerComment.find({
-      comment_pulisher_id: req.query.p_id,
+      topic_id: req.query.id,
     }, function(err, answerData) {
       if(err) {
         return next(err);
@@ -138,7 +138,8 @@ router.get('/answer', function(req, res, nexnt) {
     comment_pulisher_id: data.comment_pulisher_id,
     comment_answer_id: data.comment_answer_id,
     comment_answer_nickname: data.comment_answer_nickname,
-    comment_answer_createtime: data.comment_answer_createtime
+    comment_answer_createtime: data.comment_answer_createtime,
+    topic_id: data.topic_id
   });
   nAnswerComment.save({
     comment_id: data.comment_id,
@@ -146,7 +147,8 @@ router.get('/answer', function(req, res, nexnt) {
     comment_pulisher_id: data.comment_pulisher_id,
     comment_answer_id: data.comment_answer_id,
     comment_answer_nickname: data.comment_answer_nickname,
-    comment_answer_createtime: data.comment_answer_createtime
+    comment_answer_createtime: data.comment_answer_createtime,
+    topic_id: data.topic_id
   }, function(err) {
     if(err) {
       return next(err)

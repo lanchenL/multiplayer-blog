@@ -178,8 +178,9 @@
               <input type="text" name="comment_id" value="{{comment.id}}" readonly style="display: none;">
               <input type="text" name="comment_pulisher_id" value="{{comment.from_id}}" readonly style="display: none;">
               <input type="text" name="comment_answer_id" value="{{user._id}}" readonly style="display: none;">
-              <input type="text" name="comment_answer_id" value="{{user.nickname}}" readonly style="display: none;">
+              <input type="text" name="comment_answer_nickname" value="{{user.nickname}}" readonly style="display: none;">
               <input type="text" name="createtime" value="createtime" readonly style="display: none;">
+              <input type="text" name="createtime" value="{{ comment.topic_id }}" readonly style="display: none;">
 
               <!-- </div> -->
               <a href="#"  type="button" onclick="answer(this)" >回复</a>
@@ -290,6 +291,11 @@
       let comment_answer_id = e.parentNode.children[3].value;
       let comment_answer_nickname = e.parentNode.children[4].value;
       let comment_answer_createtime = e.parentNode.children[5].value  = nowDate;
+      let topic_id = e.parentNode.children[6].value;
+      if(textareaData == '') {
+        alert('请输入文字');
+        return
+      }
       console.log(textareaData, comment_id);
       answerData = {
         'textareaData': textareaData, 
@@ -297,7 +303,8 @@
         'comment_pulisher_id': comment_pulisher_id,
         'comment_answer_id': comment_answer_id,
         'comment_answer_nickname': comment_answer_nickname,
-        'comment_answer_createtime': comment_answer_createtime
+        'comment_answer_createtime': comment_answer_createtime,
+        'topic_id': topic_id
       };
       $.ajax({
         url: '/answer',
