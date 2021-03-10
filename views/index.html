@@ -10,7 +10,7 @@
     <section class="container" style="margin-top: 100px;  margin-bottom: 76px;">
       <ul class="media-list">
         {{ each topics topic index}}
-          <li class="media" style="margin-top: 20px; margin-bottom: 45px; ">
+          <li class="media" style="margin-top: 20px; margin-bottom: 45px; display: none;">
             {{ if user }}
                 <div class="media-left">
                   <a href="#">
@@ -30,7 +30,7 @@
               <div class="media-content" style="position: relative;">
                 <p style="position: absolute; left: 0px;">{{topic.content}}
                   <div>
-                    <span style="position: absolute;left: 50%;">浏览{{topic.readNum}}</span>
+                    <span style="position: absolute;right: 50%;">浏览{{topic.readNum}}</span>
                     <time style="position: absolute; right: 20%;">{{topic.createtime}}</time>
                   </div>
                 </p>
@@ -40,29 +40,132 @@
           </li>
         {{ /each }}
       </ul>
-      <nav aria-label="Page navigation">
-        <!-- <ul class="pagination">
-          <li>
-            <a href="#" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-          </li>
-          <li class="active"><a href="#">1</a></li>
-          <li><a href="#">2</a></li>
-          <li><a href="#">3</a></li>
-          <li><a href="#">4</a></li>
-          <li><a href="#">5</a></li>
-          <li>
-            <a href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-          </li>
-        </ul> -->
-      </nav>
+      <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+          <nav aria-label="Page navigation">
+            <ul class="pagination">
+              <li class="page">
+                <a class="last-page"  aria-hidden="true">&lt;&nbsp;&nbsp;</a>
+              </li>
+              <li id="currentPage" class="page">1</li>
+              <li>/</li>
+              <li id="totalPage" class="page">1</li>
+              <li class="page">
+                <a class="next-page" disabled="" aria-hidden="true">
+                  &nbsp;&nbsp;&gt;
+                </a>
+              </li>
+              <li class="page">
+                <span class="jump-to">&nbsp;<b>跳转</b>&nbsp;</span>
+              </li>  
+              <li class="page">
+                <input type="text" class="input-value" value="1" id="toPage" style="width: 40px;">
+              </li>
+              &nbsp;
+              <li class="page">
+                <b>
+                  <input type="button" value="确定" onClick='gotoPage()'>
+                </b>
+              </li>
+           </ul>
+          </nav>
+        </div>
+        <div class="col-md-3"></div>
+      </div>
     </section>
   </div>
   <div class="col-md-2">
   </div>
 </div>
 
+{{/block}}
+{{block 'script'}}
+<script>
+  $(document).ready(function() {
+
+    // 获取li的长度来判断第一页显示多少
+    let len =  $('ul li.media').length;
+    let totalPage = Math.ceil(len/10);
+    console.log(len, totalPage);
+    $('#totalPage').html(totalPage)
+    pagination(1, totalPage, len);
+    //  上一页
+    $(document).on('click', '.last-page', function() {
+      console.log('上一页');
+      var currPage = parseInt($('#currentPage').html());
+      var lastPage = currPage-1;
+      if(lastPage < 1){
+        $('#currentPage').html(1);
+      }else{
+        $('#currentPage').html(lastPage);
+        pagination(lastPage, totalPage, len); 
+      }
+    })
+    // 下一页
+
+    $(document).on('click','.next-page',function(){
+      console.log('下一页');
+      var currPage = parseInt($('#currentPage').html());
+      var nextPage = currPage+1;
+      var pageCount = $('#totalPage').html();
+      if(nextPage <= pageCount){
+        $('#currentPage').html(nextPage);
+        pagination(nextPage, totalPage, len);
+      }else{
+        $('#currentPage').html(pageCount);
+      }
+    });
+  })
+  
+  // 分页处理
+  function pagination(currentPage, totalPage, len){
+      console.log('currentPage', currentPage, 'totalPage', totalPage);
+      // $('ul li.media')[0].style.display = 'none'
+      let minStartNode = currentPage*10 - 10;
+      let maxEndNode = currentPage*10 -1;
+      console.log('minStartNode', minStartNode, 'maxEndNode', maxEndNode, 'len', len);
+      if(len > 0) {
+        if(minStartNode > 0) {
+          for (let f = 0; f < minStartNode; f++) {
+            $('ul li.media')[f].style.display = 'none';
+          }
+        }
+        if(len < maxEndNode) {
+          for (let i = minStartNode; i < len; i++) {
+            $('ul li.media')[i].style.display = '';
+          }
+        }else {
+          for (let j = minStartNode; j < maxEndNode; j++) {
+            $('ul li.media')[j].style.display = '';
+          }
+          for (let h = maxEndNode; h < len; h++) {
+            $('ul li.media')[h].style.display = 'none';
+          }
+        }
+      }
+      
+    }
+ 
+
+  // 跳转页面
+  function gotoPage() {
+    // console.log(totalPage);
+    let len =  $('ul li.media').length;
+    let totalPage = parseInt($('#totalPage').html());
+    let pageNum = parseInt($.trim($('#toPage').val()));
+    if(!!pageNum) {
+        if(pageNum > totalPage) {
+        pageNum = totalPage;
+      }else {
+        pageNum = pageNum;
+      }
+    }else {
+      alert('请输入数字')
+    }
+    $('#currentPage').html(pageNum);
+    pagination(pageNum, totalPage, len)
+    console.log('跳转到', pageNum, '总页:', totalPage);
+  }
+</script>
 {{/block}}
