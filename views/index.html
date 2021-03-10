@@ -46,6 +46,11 @@
           <nav aria-label="Page navigation">
             <ul class="pagination">
               <li class="page">
+                <b>
+                  <input type="button" value="首页" onClick='firstPage()'>
+                </b>
+              </li>&nbsp;
+              <li class="page">
                 <a class="last-page"  aria-hidden="true">&lt;&nbsp;&nbsp;</a>
               </li>
               <li id="currentPage" class="page">1</li>
@@ -55,6 +60,11 @@
                 <a class="next-page" disabled="" aria-hidden="true">
                   &nbsp;&nbsp;&gt;
                 </a>
+              </li>&nbsp;
+              <li class="page">
+                <b>
+                  <input type="button" value="尾页" onClick='lastPage()'>
+                </b>
               </li>
               <li class="page">
                 <span class="jump-to">&nbsp;<b>跳转</b>&nbsp;</span>
@@ -87,9 +97,19 @@
     // 获取li的长度来判断第一页显示多少
     let len =  $('ul li.media').length;
     let totalPage = Math.ceil(len/10);
-    console.log(len, totalPage);
+    let currentPageStore = localStorage['currentPage']
+    console.log('currentPageStore', currentPageStore);
+    if(currentPageStore) {
+      currentPageStore = currentPageStore
+    }else {
+      currentPageStore = 1;
+    }
     $('#totalPage').html(totalPage)
-    pagination(1, totalPage, len);
+    $('#currentPage').html(currentPageStore);
+    pagination(currentPageStore, totalPage, len);
+    
+    
+
     //  上一页
     $(document).on('click', '.last-page', function() {
       console.log('上一页');
@@ -144,9 +164,25 @@
           }
         }
       }
-      
+      localStorage.setItem('currentPage', currentPage)
     }
  
+    
+    // 首页
+    function firstPage() {
+      console.log('首页');
+      let len =  $('ul li.media').length;
+      let totalPage = Math.ceil(len/10);
+      pagination(1, totalPage, len);
+    }
+
+    // 尾页
+    function lastPage() {
+      console.log('尾页');
+      let len =  $('ul li.media').length;
+      let totalPage = Math.ceil(len/10);
+      pagination(totalPage, totalPage, len);
+    }
 
   // 跳转页面
   function gotoPage() {
