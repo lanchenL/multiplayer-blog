@@ -173,6 +173,7 @@
       console.log('首页');
       let len =  $('ul li.media').length;
       let totalPage = Math.ceil(len/10);
+      $('#currentPage').html(1);
       pagination(1, totalPage, len);
     }
 
@@ -181,6 +182,7 @@
       console.log('尾页');
       let len =  $('ul li.media').length;
       let totalPage = Math.ceil(len/10);
+      $('#currentPage').html(totalPage);
       pagination(totalPage, totalPage, len);
     }
 
