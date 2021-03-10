@@ -478,6 +478,25 @@ router.get('/changeComment', function(req, res, next) {
   // res.redirect('/')
 })
 
+// 修改回复
+router.get('/changeAnswer', function(req, res, next) {
+  console.log('修改回复', req.query);
+  AnswerComment.updateOne({
+    _id: req.query.commentAnswerId
+  }, {
+    answer_content: req.query.commentAnswerContent
+  }, function(err) {
+    if(err) {
+      return next(err)
+    }
+    console.log('修改回复成功');
+    res.status(200).json({
+      err_code: 0,
+      message: 'update answer is succeed'
+    })
+  })
+})
+
 // 删除评论
 router.get('/delectComment', function(req, res, next) {
   console.log('删除');
@@ -509,6 +528,21 @@ router.get('/delectComment', function(req, res, next) {
     res.status(200).json({
       err_code: 0,
       message: 'delect comment is succeed'
+    })
+  })
+})
+router.get('/delectAnswer', function(req, res, next) {
+  console.log('删除回复', req.query);
+  AnswerComment.deleteOne({
+    _id: req.query.commentAnswerId
+  }, function(err) {
+    if(err) {
+      return next(err);
+    }
+    console.log('删除回复成功');
+    res.status(200).json({
+      err_code: 0,
+      message: 'delect answer is succeed'
     })
   })
 })

@@ -166,7 +166,23 @@
               <sapn style="position: absolute; right: 20%;">
                 {{commentAnswerItem.comment_answer_createtime}}
               </sapn>
-
+              {{ if user._id === commentAnswerItem.comment_answer_id}}
+                <div style="display: inline;position: absolute;right: 35px;">
+                  <a href="#" onclick="changeAnswer(this)">修改
+                    <input type="text"  name="commentInputValue" value="{{commentAnswerItem.answer_content}}" style="display: none;">
+                    <input type="text"  name="commentInputValue" value="{{commentAnswerItem.id}}" style="display: none;">
+                  </a>
+                  <a href="#"  onclick="delectAnswer(this)">删除
+                    <input type="text"  name="commentInputValue" value="{{commentAnswerItem.id}}" style="display: none;">
+                  </a>
+                </div>
+              {{ else if  user._id === commentAnswerItem.comment_pulisher_id}}
+                <div style="display: inline;position: absolute;right: 35px;">
+                  <a href="#"  onclick="delectAnswer(this)">删除
+                    <input type="text"  name="commentInputValue" value="{{commentAnswerItem.id}}" style="display: none;">
+                  </a>
+                </div>
+              {{ /if }}
             </div>
             {{ /if }}
           {{ /each }}
@@ -373,7 +389,7 @@
         success: function(data) {
           console.log(data);
           if(data.err_code === 0) {
-            alert('修改评论内容成功!')
+            // alert('修改评论内容成功!')
             // window.location.href = '/topics/show' // 因为首页需要传参进去才可以正常加载，所以在此处路由不行
             window.location.reload();
           }
@@ -381,6 +397,59 @@
       })
       }else {
         console.log('请输入内容!');
+      }
+    }
+
+    // 修改回复
+    function changeAnswer(e) {
+      let commentAnswerContent = e.children[0].value;
+      let commentAnswerId = e.children[1].value;
+      let result = prompt('请输入要修改的内容', commentAnswerContent);
+      if(!!result) {
+        console.log('确定修改');
+        let commentData = {'commentAnswerContent': result,'commentAnswerId': commentAnswerId};
+        $.ajax({
+        url: '/changeAnswer',
+        dataType: 'json',
+        type: 'get',
+        data: commentData,
+        success: function(data) {
+          console.log(data);
+          if(data.err_code === 0) {
+            // alert('修改评论内容成功!')
+            // window.location.href = '/topics/show' // 因为首页需要传参进去才可以正常加载，所以在此处路由不行
+            window.location.reload();
+          }
+        }
+      })
+      }else {
+        console.log('请输入内容!');
+      }
+      
+    }
+    // 删除回复
+    function delectAnswer(e) {
+      console.log('删除');
+      let confirmDelect = window.confirm('确定删除评论！')
+      console.log(confirmDelect);
+      let commentAnswerId = e.children[0].value;
+      let commentData = {'commentAnswerId': commentAnswerId};
+      if(confirmDelect) {
+          $.ajax({
+          url: '/delectAnswer',
+          dataType: 'json',
+          type: 'get',
+          data: commentData,
+          success: function(data) {
+            console.log(data);
+            if(data.err_code === 0) {
+              // alert('此条评论删除成功！')
+              location.reload();
+            }
+          }
+        })
+      }else {
+        console.log('已经取消删除评论!');
       }
     }
 
@@ -399,7 +468,7 @@
           success: function(data) {
             console.log(data);
             if(data.err_code === 0) {
-              alert('此条评论删除成功！')
+              // alert('此条评论删除成功！')
               location.reload();
             }
           }
